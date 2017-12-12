@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1817B1EA2AAA354089049650 /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA0E9E10CF84B22BD71A5C15 /* Pods_IOSGroupProject.framework */; };
 		A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BD81FDF8B6C00CC8652 /* AppDelegate.swift */; };
-		A1C43BDB1FDF8B6C00CC8652 /* ListingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BDA1FDF8B6C00CC8652 /* ListingsViewController.swift */; };
 		A1C43BDE1FDF8B6C00CC8652 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1C43BDC1FDF8B6C00CC8652 /* Main.storyboard */; };
 		A1C43BE11FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BDF1FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld */; };
 		A1C43BE31FDF8B6C00CC8652 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C43BE21FDF8B6C00CC8652 /* Assets.xcassets */; };
@@ -264,10 +263,8 @@
 			files = (
 				EB884D981FDF98F70047D618 /* LoginViewController.swift in Sources */,
 				EB884D9C1FDF9A4C0047D618 /* AuthLayout.swift in Sources */,
-				A1C43BDB1FDF8B6C00CC8652 /* ListingsViewController.swift in Sources */,
 				EB884DA31FDF9AD20047D618 /* Extensions.swift in Sources */,
 				EB884DA11FDF9AA20047D618 /* Notification.swift in Sources */,
-				A1C43BDB1FDF8B6C00CC8652 /* ListingsViewController.swift in Sources */,
 				A1C43BF41FDFB5B700CC8652 /* ListingTableViewCell.swift in Sources */,
 				A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */,
 				A1C43BF01FDF968700CC8652 /* Listing.swift in Sources */,
