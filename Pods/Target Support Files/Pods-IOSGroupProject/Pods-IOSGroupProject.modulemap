@@ -1,0 +1,6 @@
+framework module Pods_IOSGroupProject {
+  umbrella header "Pods-IOSGroupProject-umbrella.h"
+
+  export *
+  module * { export * }
+}
