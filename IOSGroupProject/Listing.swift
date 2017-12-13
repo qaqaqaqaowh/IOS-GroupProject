@@ -11,9 +11,11 @@ import Foundation
 class Listing {
     var videoURL: String!
     var viewCount: Int!
+    var ownerUID: String!
     
-    init(withURLString: String, withViewCount: Int) {
+    init(withURLString: String, withViewCount: Int, withOwner: String) {
         self.videoURL = withURLString
         self.viewCount = withViewCount
+        self.ownerUID = withOwner
     }
 }

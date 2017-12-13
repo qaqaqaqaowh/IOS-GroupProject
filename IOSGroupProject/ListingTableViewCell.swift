@@ -19,7 +19,7 @@ class ListingTableViewCell: UITableViewCell {
     
     @IBOutlet weak var viewCount: UILabel!
     
-    var listing: Listing = Listing(withURLString: "", withViewCount: 0)
+    var listing: Listing = Listing(withURLString: "", withViewCount: 0, withOwner: "")
     
     var player = AVPlayer()
     
@@ -33,7 +33,7 @@ class ListingTableViewCell: UITableViewCell {
         let tap = UITapGestureRecognizer(target: self, action: #selector(videoTapped))
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(cellSwiped))
         swipe.numberOfTouchesRequired = 1
-        swipe.direction = UISwipeGestureRecognizerDirection.right
+        swipe.direction = UISwipeGestureRecognizerDirection.left
         videoView.isUserInteractionEnabled = true
         videoView.addGestureRecognizer(tap)
         self.addGestureRecognizer(swipe)
