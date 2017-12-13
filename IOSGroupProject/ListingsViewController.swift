@@ -7,19 +7,36 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ListingsViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    let ref = Database.database().reference()
+    
     var listings : [Listing] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let newListing = Listing(withURLString: "https://firebasestorage.googleapis.com/v0/b/project-187307.appspot.com/o/IMG_3810.MOV?alt=media&token=6a8c9c19-953a-49c1-9783-f7f91f7d51a6", withViewCount: 2)
-        listings.append(newListing)
         tableView.dataSource = self
+        observeListings()
         // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    func observeListings() {
+        ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
+            guard let listings = snapshot.value as? [String:Any],
+            let urlString = listings["videoURL"] as? String,
+            let viewCount = listings["viewCount"] as? Int,
+            let ownerUID = listings["owner"] as? String else {return}
+            let newListing = Listing(withURLString: urlString, withViewCount: viewCount, withOwner: ownerUID)
+            DispatchQueue.main.async {
+                self.listings.append(newListing)
+                let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+            }
+        })
     }
 
     override func didReceiveMemoryWarning() {

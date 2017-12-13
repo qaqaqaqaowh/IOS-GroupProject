@@ -10,7 +10,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    var listing : Listing = Listing(withURLString: "", withViewCount: 0)
+    var listing : Listing = Listing(withURLString: "", withViewCount: 0, withOwner: "")
 
     override func viewDidLoad() {
         super.viewDidLoad()
