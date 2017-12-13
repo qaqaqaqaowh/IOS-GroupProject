@@ -15,7 +15,7 @@ protocol ShowDetailDelegate {
 
 class ListingTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var videoView: AVPlayerViewController!
+    @IBOutlet weak var videoView: UIView!
     
     @IBOutlet weak var viewCount: UILabel!
     
@@ -23,22 +23,33 @@ class ListingTableViewCell: UITableViewCell {
     
     var player = AVPlayer()
     
+    let controller = AVPlayerViewController()
+    
     var delegate: ShowDetailDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        viewCount.text = String(listing.viewCount)
-        videoView.player = player
+        videoView.backgroundColor = UIColor.black
         let tap = UITapGestureRecognizer(target: self, action: #selector(videoTapped))
-        videoView.view.isUserInteractionEnabled = true
-        videoView.view.addGestureRecognizer(tap)
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(cellSwiped))
+        swipe.direction = UISwipeGestureRecognizerDirection.right
+        videoView.isUserInteractionEnabled = true
+        videoView.addGestureRecognizer(tap)
+        videoView.addGestureRecognizer(swipe)
         // Initialization code
     }
     
+    @objc func cellSwiped() {
+        delegate?.showDetail(withListing: listing)
+    }
+    
     @objc func videoTapped() {
+        controller.view.frame = videoView.bounds
         guard let url = URL(string: listing.videoURL)
             else {return}
         player = AVPlayer(url: url)
+        controller.player = player
+        videoView.addSubview(controller.view)
         player.play()
     }
     
@@ -47,9 +58,4 @@ class ListingTableViewCell: UITableViewCell {
         
         // Configure the view for the selected state
     }
-    
-    @IBAction func showDetailButton(_ sender:UIButton) {
-        delegate?.showDetail(withListing: listing)
-    }
-    
 }

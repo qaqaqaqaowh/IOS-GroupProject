@@ -23,8 +23,6 @@ class ListingsViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
 
 extension ListingsViewController: UITableViewDataSource {
@@ -35,6 +33,7 @@ extension ListingsViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ListingTableViewCell
         let selectedListing = listings[indexPath.row]
         cell.listing = selectedListing
+        cell.viewCount.text = String(selectedListing.viewCount)
         return cell
     }
 }
