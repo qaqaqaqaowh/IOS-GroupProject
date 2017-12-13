@@ -32,10 +32,11 @@ class ListingTableViewCell: UITableViewCell {
         videoView.backgroundColor = UIColor.black
         let tap = UITapGestureRecognizer(target: self, action: #selector(videoTapped))
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(cellSwiped))
+        swipe.numberOfTouchesRequired = 1
         swipe.direction = UISwipeGestureRecognizerDirection.right
         videoView.isUserInteractionEnabled = true
         videoView.addGestureRecognizer(tap)
-        videoView.addGestureRecognizer(swipe)
+        self.addGestureRecognizer(swipe)
         // Initialization code
     }
     
