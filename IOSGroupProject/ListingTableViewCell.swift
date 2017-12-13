@@ -48,6 +48,7 @@ class ListingTableViewCell: UITableViewCell {
         guard let url = URL(string: listing.videoURL)
             else {return}
         player = AVPlayer(url: url)
+        controller.player = player
         videoView.addSubview(controller.view)
         player.play()
     }
