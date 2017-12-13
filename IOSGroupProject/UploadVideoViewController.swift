@@ -30,6 +30,7 @@ class UploadVideoViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        playerController = AVPlayerViewController()
         let tap = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         videoView.addGestureRecognizer(tap)
         // Do any additional setup after loading the view.
@@ -37,8 +38,8 @@ class UploadVideoViewController: UIViewController {
     
     @objc func imageViewTapped() {
         let cameraController = UIImagePickerController()
-        cameraController.sourceType = .camera
-        cameraController.mediaTypes = [kUTTypeMovie as NSString as String]
+        cameraController.sourceType = .savedPhotosAlbum
+        cameraController.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum)!
         cameraController.allowsEditing = false
         cameraController.delegate = self
         present(cameraController, animated: true, completion: nil)
@@ -50,11 +51,17 @@ class UploadVideoViewController: UIViewController {
     }
     
     @IBAction func uploadButton(_ sender: UIButton) {
-        guard let url = mediaURL else {return}
-        storageRef.child("videos").putFile(from: url, metadata: nil) { (metadata, error) in
-            guard let downloadURL = metadata?.downloadURL(),
-                let currentUserUID = Auth.auth().currentUser?.uid else {return}
-            self.ref.child("listings").childByAutoId().setValue(["owner":currentUserUID,"videoURL":downloadURL.absoluteString,"viewCount":0])
+        guard let url = mediaURL,
+        let currentUserUID = Auth.auth().currentUser?.uid else {return}
+        let key = self.ref.child("listings").childByAutoId()
+        key.setValue(["owner":currentUserUID,"viewCount":0])
+        storageRef.child("videos").child(key.key).putFile(from: url, metadata: nil) { (metadata, error) in
+            guard let downloadURL = metadata?.downloadURL() else {return}
+            key.updateChildValues(["videoURL":downloadURL.absoluteString])
+            let alert = UIAlertController(title: "Done", message: "Done", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(ok)
+            self.present(alert, animated: true, completion: nil)
         }
     }
 
@@ -76,7 +83,7 @@ extension UploadVideoViewController: UIImagePickerControllerDelegate, UINavigati
         dismiss(animated: true, completion: nil)
         player = AVPlayer(url: mediaURL!)
         playerController.player = player
-        playerController.view.bounds = videoView.frame
+        playerController.view.frame = videoView.bounds
         videoView.addSubview(playerController.view)
         player.play()
     }
