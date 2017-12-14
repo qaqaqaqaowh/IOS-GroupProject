@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import FirebaseAuth
 
 extension UIViewController {
     
@@ -19,7 +20,6 @@ extension UIViewController {
         
         present(alert, animated: true, completion: nil)
     }
-    
 }
 
 let imageCache = NSCache<NSString, AnyObject>()

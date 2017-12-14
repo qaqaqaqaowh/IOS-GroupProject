@@ -7,15 +7,18 @@
 //
 
 import Foundation
+import UIKit
 
 class Listing {
     var videoURL: String!
-    var viewCount: Int!
+    var name: String!
     var ownerUID: String!
+    var thumbImage: UIImage?
     
-    init(withURLString: String, withViewCount: Int, withOwner: String) {
+    init(withURLString: String, withName: String, withOwner: String, withThumb: UIImage?) {
         self.videoURL = withURLString
-        self.viewCount = withViewCount
+        self.name = withName
         self.ownerUID = withOwner
+        self.thumbImage = withThumb
     }
 }
