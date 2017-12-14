@@ -14,8 +14,6 @@ class SettingViewController: UIViewController {
     
     var editingStat = false
     
-    var save = false
-    
     var infos: [ContactInfo] = []
 
     override func viewDidLoad() {
@@ -61,7 +59,10 @@ class SettingViewController: UIViewController {
             sender.title = "Save"
         } else {
             sender.title = "Edit"
-            save = true
+            for (index, cell) in tableView.visibleCells.enumerated() {
+                guard let validCell = cell as? SettingTableViewCell else {return}
+                infos[index].info = validCell.textField.text
+            }
         }
         tableView.reloadData()
     }
@@ -82,9 +83,6 @@ extension SettingViewController: UITableViewDataSource {
             cell.textField.isUserInteractionEnabled = true
         } else {
             cell.textField.isUserInteractionEnabled = false
-            if save {
-                selectedInfo.info = cell.textField.text
-            }
         }
         cell.titleLabel.text = selectedInfo.title
         cell.textField.text = selectedInfo.info

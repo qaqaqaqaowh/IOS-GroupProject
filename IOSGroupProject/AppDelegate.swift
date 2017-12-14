@@ -70,8 +70,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func goToAuth() {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let mainView = LoginViewController(nibName: nil, bundle: nil)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainView = storyboard.instantiateViewController(withIdentifier: "SettingViewController")
         let nav = UINavigationController()
         nav.viewControllers = [mainView]
         self.window!.rootViewController = nav
