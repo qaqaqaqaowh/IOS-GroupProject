@@ -15,11 +15,11 @@ protocol ShowDetailDelegate {
 
 class ListingTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var videoView: UIView!
+    @IBOutlet weak var videoView: UIImageView!
     
-    @IBOutlet weak var viewCount: UILabel!
+    @IBOutlet weak var nameLabel: UILabel!
     
-    var listing: Listing = Listing(withURLString: "", withViewCount: 0, withOwner: "")
+    var listing: Listing = Listing(withURLString: "", withName: "", withOwner: "", withThumb: nil)
     
     var player = AVPlayer()
     
@@ -51,6 +51,7 @@ class ListingTableViewCell: UITableViewCell {
         player = AVPlayer(url: url)
         controller.player = player
         videoView.addSubview(controller.view)
+        videoView.image = nil
         player.play()
     }
     

@@ -18,6 +18,8 @@ class UploadVideoViewController: UIViewController {
     
     @IBOutlet weak var videoView: UIView!
     
+    @IBOutlet weak var textField: UITextField!
+    
     let storageRef = Storage.storage().reference()
     
     let ref = Database.database().reference()
@@ -52,16 +54,33 @@ class UploadVideoViewController: UIViewController {
     
     @IBAction func uploadButton(_ sender: UIButton) {
         guard let url = mediaURL,
-        let currentUserUID = Auth.auth().currentUser?.uid else {return}
-        let key = self.ref.child("listings").childByAutoId()
-        key.setValue(["owner":currentUserUID,"viewCount":0])
-        storageRef.child("videos").child(key.key).putFile(from: url, metadata: nil) { (metadata, error) in
-            guard let downloadURL = metadata?.downloadURL() else {return}
-            key.updateChildValues(["videoURL":downloadURL.absoluteString])
-            let alert = UIAlertController(title: "Done", message: "Done", preferredStyle: .alert)
-            let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
-            alert.addAction(ok)
-            self.present(alert, animated: true, completion: nil)
+        let currentUserUID = Auth.auth().currentUser?.uid,
+        let text = textField.text else {return}
+        let asset = AVURLAsset(url: url)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+        do {
+            let cgImage = try imageGenerator.copyCGImage(at: CMTimeMake(0, 1), actualTime: nil)
+            let thumb = UIImage(cgImage: cgImage)
+            let data = UIImageJPEGRepresentation(thumb, 1)
+            
+            let key = self.ref.child("listings").childByAutoId()
+            key.setValue(["owner":currentUserUID,"name":text])
+            storageRef.child("videos").child(key.key).putFile(from: url, metadata: nil) { (metadata, error) in
+                guard let downloadURL = metadata?.downloadURL() else {return}
+                key.updateChildValues(["videoURL":downloadURL.absoluteString])
+                guard let validData = data else {return}
+                self.storageRef.child("images").child(key.key).putData(validData, metadata: nil, completion: { (metadata, error) in
+                    guard let thumbURL = metadata?.downloadURL() else {return}
+                    key.updateChildValues(["thumb":thumbURL.absoluteString])
+                    let alert = UIAlertController(title: "Done", message: "Done", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                })
+            }
+        } catch {
+            
         }
     }
 

@@ -28,14 +28,23 @@ class ListingsViewController: UIViewController {
         ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
             guard let listings = snapshot.value as? [String:Any],
             let urlString = listings["videoURL"] as? String,
-            let viewCount = listings["viewCount"] as? Int,
-            let ownerUID = listings["owner"] as? String else {return}
-            let newListing = Listing(withURLString: urlString, withViewCount: viewCount, withOwner: ownerUID)
-            DispatchQueue.main.async {
-                self.listings.append(newListing)
-                let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
-                self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
-            }
+            let name = listings["name"] as? String,
+            let ownerUID = listings["owner"] as? String,
+            let thumbURL = listings["thumb"] as? String,
+            let url = URL(string: thumbURL) else {return}
+            let manager = URLSession.shared
+            let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
+                if let validData = data,
+                    let image = UIImage(data: validData){
+                    let newListing = Listing(withURLString: urlString, withName: name, withOwner: ownerUID, withThumb: image)
+                    DispatchQueue.main.async {
+                        self.listings.append(newListing)
+                        let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                        self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                    }
+                }
+            })
+            dataTask.resume()
         })
     }
 
@@ -53,7 +62,8 @@ extension ListingsViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ListingTableViewCell
         let selectedListing = listings[indexPath.row]
         cell.listing = selectedListing
-        cell.viewCount.text = String(selectedListing.viewCount)
+        cell.nameLabel.text = selectedListing.name
+        cell.videoView.image = selectedListing.thumbImage
         cell.delegate = self
         return cell
     }
