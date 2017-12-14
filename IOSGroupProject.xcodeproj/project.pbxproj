@@ -96,11 +96,7 @@
 				EB884DA01FDF9AA20047D618 /* Notification.swift */,
 				EB884DA21FDF9AD20047D618 /* Extensions.swift */,
 				EB884D9D1FDF9A600047D618 /* Auth */,
-				A1C43BDA1FDF8B6C00CC8652 /* ListingsViewController.swift */,
-				A1C43BEF1FDF968700CC8652 /* Listing.swift */,
-				A1C43BF11FDFAB1200CC8652 /* DetailViewController.swift */,
-				A1C43BF31FDFB5B700CC8652 /* ListingTableViewCell.swift */,
-				A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */,
+				EBDF48561FE2322200D33F92 /* Listing */,
 				A1C43BDC1FDF8B6C00CC8652 /* Main.storyboard */,
 				A1C43BE21FDF8B6C00CC8652 /* Assets.xcassets */,
 				A1C43BE41FDF8B6C00CC8652 /* LaunchScreen.storyboard */,
@@ -127,6 +123,18 @@
 				EB884D9B1FDF9A4C0047D618 /* AuthLayout.swift */,
 			);
 			path = Auth;
+			sourceTree = "<group>";
+		};
+		EBDF48561FE2322200D33F92 /* Listing */ = {
+			isa = PBXGroup;
+			children = (
+				A1C43BDA1FDF8B6C00CC8652 /* ListingsViewController.swift */,
+				A1C43BEF1FDF968700CC8652 /* Listing.swift */,
+				A1C43BF11FDFAB1200CC8652 /* DetailViewController.swift */,
+				A1C43BF31FDFB5B700CC8652 /* ListingTableViewCell.swift */,
+				A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */,
+			);
+			path = Listing;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
