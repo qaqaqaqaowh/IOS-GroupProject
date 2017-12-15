@@ -11,15 +11,12 @@ import FirebaseAuth
 import FirebaseDatabase
 
 
-class SignUpViewController : AuthLayout {
+class SignUpViewController : UIViewController {
     
     var emailTextField : UITextField = UITextField()
     var passwordTextField : UITextField = UITextField()
-    var signUpButton : UIButton = UIButton(){
-        didSet{
-            signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
-        }
-    }
+    
+    
     @objc func signUpButtonTapped(){
         let ref = Database.database().reference()
         
@@ -44,44 +41,17 @@ class SignUpViewController : AuthLayout {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
-        createStackView()
+        self.view.backgroundColor = UIColor(red: 250/255, green: 60/255, blue: 70/255, alpha: 1)
     }
     
 }
 
 
-
 extension SignUpViewController {
-    
-    
+
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = false
     }
-    
-    
-    func createLoginViews() {
-        emailTextField = createEmailTextField()
-        passwordTextField = createPasswordTextField()
-        signUpButton = createSignUpButton()
-    }
-    
-    
-    func createStackView(){
-        createLoginViews()
-        let loginViews : [UIView] = [emailTextField, passwordTextField, signUpButton]
-        var loginStackView = UIStackView()
-        loginStackView = UIStackView(arrangedSubviews: loginViews)
-        loginStackView.axis = .vertical
-        loginStackView.distribution = .fillEqually
-        loginStackView.alignment = .center
-        loginStackView.spacing = 50
-        loginStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(loginStackView)
-        loginStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loginStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    }
-    
 }
 
 

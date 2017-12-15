@@ -12,13 +12,15 @@ import UIKit
 class Listing {
     var videoURL: String!
     var name: String!
-    var ownerUID: String!
     var thumbImage: UIImage?
+    var price : String?
+    var location : String?
+    var squareFeet : String?
+    var numberOfBedrooms : String?
     
     init(withURLString: String, withName: String, withOwner: String, withThumb: UIImage?) {
         self.videoURL = withURLString
         self.name = withName
-        self.ownerUID = withOwner
         self.thumbImage = withThumb
     }
 }

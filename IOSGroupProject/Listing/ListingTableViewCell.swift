@@ -15,35 +15,31 @@ protocol ShowDetailDelegate {
 
 class ListingTableViewCell: UITableViewCell {
     
+    
     @IBOutlet weak var videoView: UIImageView!
-    
     @IBOutlet weak var nameLabel: UILabel!
-    
     var listing: Listing = Listing(withURLString: "", withName: "", withOwner: "", withThumb: nil)
-    
     var player = AVPlayer()
-    
     let controller = AVPlayerViewController()
-    
     var delegate: ShowDetailDelegate?
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        videoView.backgroundColor = UIColor.black
-        let tap = UITapGestureRecognizer(target: self, action: #selector(videoTapped))
+    
+    func createSwipeRecognizer(){
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(cellSwiped))
         swipe.numberOfTouchesRequired = 1
         swipe.direction = UISwipeGestureRecognizerDirection.left
-        videoView.isUserInteractionEnabled = true
-        videoView.addGestureRecognizer(tap)
         self.addGestureRecognizer(swipe)
-        // Initialization code
     }
-    
     @objc func cellSwiped() {
         delegate?.showDetail(withListing: listing)
     }
     
+    
+    func createTapRecognizer(){
+        let tap = UITapGestureRecognizer(target: self, action: #selector(videoTapped))
+        videoView.isUserInteractionEnabled = true
+        videoView.addGestureRecognizer(tap)
+    }
     @objc func videoTapped() {
         controller.view.frame = videoView.bounds
         guard let url = URL(string: listing.videoURL)
@@ -55,9 +51,11 @@ class ListingTableViewCell: UITableViewCell {
         player.play()
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        videoView.backgroundColor = UIColor.black
+        createTapRecognizer()
+        createSwipeRecognizer()
     }
 }
