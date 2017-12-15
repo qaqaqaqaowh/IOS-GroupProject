@@ -20,6 +20,13 @@ extension UIViewController {
         
         present(alert, animated: true, completion: nil)
     }
+    
+    func requireLogin() {
+        if Auth.auth().currentUser == nil {
+            let vc = storyboard?.instantiateViewController(withIdentifier: "LoginViewController")
+            navigationController?.viewControllers = [vc!]
+        }
+    }
 }
 
 let imageCache = NSCache<NSString, AnyObject>()
