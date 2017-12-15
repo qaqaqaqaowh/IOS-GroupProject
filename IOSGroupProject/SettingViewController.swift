@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import FirebaseDatabase
-import FirebaseAuth
 
 class SettingViewController: UIViewController {
     
@@ -16,36 +14,20 @@ class SettingViewController: UIViewController {
     
     var editingStat = false
     
-    let titleArray = ["Name","Email"]
-    
     var infos: [ContactInfo] = []
-    
-    let ref = Database.database().reference()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         requireLogin()
+        let titleArray = ["Name","Email"]
+        let infoArray = ["John Appleseed", "Joh@John.com"]
+        for (index, value) in titleArray.enumerated() {
+            let newInfo = ContactInfo(withTitle: value, withInfo: infoArray[index])
+            infos.append(newInfo)
+        }
         tableView.dataSource = self
-        getInfos()
+        tableView.reloadData()
         // Do any additional setup after loading the view.
-    }
-    
-    func getInfos() {
-        ref.child("users").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (data) in
-            guard let validData = data.value as? [String:Any],
-                let email = validData["email"] as? String,
-            let infosDict = validData["infos"] as? [String:Any],
-            let name = infosDict["name"] as? String else {return}
-            let emailInfo = ContactInfo(withTitle: "Email", withInfo: email)
-            let nameInfo = ContactInfo(withTitle: "Name", withInfo: name)
-            DispatchQueue.main.async {
-                self.infos.append(emailInfo)
-                self.infos.append(nameInfo)
-                let indexPath1 = IndexPath(row: self.infos.count - 2, section: 0)
-                let indexPath2 = IndexPath(row: self.infos.count - 1, section: 0)
-                self.tableView.insertRows(at: [indexPath1, indexPath2], with: .right)
-            }
-        })
     }
 
     override func didReceiveMemoryWarning() {
@@ -81,13 +63,6 @@ class SettingViewController: UIViewController {
             for (index, cell) in tableView.visibleCells.enumerated() {
                 guard let validCell = cell as? SettingTableViewCell else {return}
                 infos[index].info = validCell.textField.text
-            }
-            for info in infos {
-                if info.title == "Name" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("infos").updateChildValues(["name":info.info])
-                } else if info.title == "Email" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["email":info.info])
-                }
             }
         }
         tableView.reloadData()
