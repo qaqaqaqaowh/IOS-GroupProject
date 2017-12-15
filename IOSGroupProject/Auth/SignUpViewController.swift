@@ -13,11 +13,13 @@ import FirebaseDatabase
 
 class SignUpViewController : UIViewController {
     
-    var emailTextField : UITextField = UITextField()
-    var passwordTextField : UITextField = UITextField()
+    
+    @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var signUpButton: UIButton!
     
     
-    @objc func signUpButtonTapped(){
+    @IBAction func signUpButtonTapped(_ sender: Any) {
         let ref = Database.database().reference()
         
         guard let email = emailTextField.text,
@@ -37,11 +39,18 @@ class SignUpViewController : UIViewController {
             }
         }
     }
+  
     
+    func makeRound(_ view: UIView){
+        view.layer.cornerRadius = 5
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(red: 250/255, green: 60/255, blue: 70/255, alpha: 1)
+        self.view.backgroundColor = UIColor(red: 255/255, green: 70/255, blue: 80/255, alpha: 1)
+        makeRound(emailTextField)
+        makeRound(passwordTextField)
+        makeRound(signUpButton)
     }
     
 }

@@ -9,24 +9,16 @@
 import UIKit
 import FirebaseAuth
 
-class LoginViewController: AuthLayout {
+class LoginViewController: UIViewController {
     
     
-    var emailTextField : UITextField = UITextField()
-    var passwordTextField : UITextField = UITextField()
-    var loginButton : UIButton = UIButton(){
-        didSet{
-            loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
-        }
-    }
-    var signUpButton : UIButton = UIButton(){
-        didSet{
-            signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
-        }
-    }
+    @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var signUpButton: UIButton!
     
     
-    @objc func loginButtonTapped() {
+    @IBAction func loginButtonTapped(_ sender: Any) {
         guard let email = emailTextField.text,
             let password = passwordTextField.text
             else {return}
@@ -43,45 +35,28 @@ class LoginViewController: AuthLayout {
         }
     }
     
+    @IBAction func signUpButtonTapped(_ sender: Any) {
+        let vc = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "SignUpViewController") as! SignUpViewController
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
-    @objc func signUpButtonTapped(){
-        let signUpVC = SignUpViewController()
-        navigationController?.pushViewController(signUpVC, animated: true)
+    
+    func makeRound(_ view: UIView){
+        view.layer.cornerRadius = 5
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background")!)
-        createStackView()
+        self.view.backgroundColor = UIColor(red: 255/255, green: 70/255, blue: 80/255, alpha: 1)
+        makeRound(emailTextField)
+        makeRound(passwordTextField)
+        makeRound(loginButton)
+        makeRound(signUpButton)
     }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = true
     }
-    
-    
-    func createLoginViews() {
-        emailTextField = createEmailTextField()
-        passwordTextField = createPasswordTextField()
-        loginButton = createLoginButton()
-        signUpButton = createSignUpButton()
-    }
-    
-    
-    func createStackView(){
-        createLoginViews()
-        let loginViews : [UIView] = [emailTextField, passwordTextField, loginButton, signUpButton]
-        var loginStackView = UIStackView()
-        loginStackView = UIStackView(arrangedSubviews: loginViews)
-        loginStackView.axis = .vertical
-        loginStackView.distribution = .fillEqually
-        loginStackView.alignment = .center
-        loginStackView.spacing = 50
-        loginStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(loginStackView)
-        loginStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loginStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    }
-    
-    
 }

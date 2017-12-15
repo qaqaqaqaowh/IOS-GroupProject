@@ -20,7 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         addNotificationObservers()
-        
+        UINavigationBar.appearance().barStyle = .blackOpaque
+
         if Auth.auth().currentUser != nil {
             goToMain()
         } else {
@@ -60,8 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         goToMain()
     }
     func goToMain() {
-        let VC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as? UITabBarController
-        window?.rootViewController = VC
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MainTabBarController") as? UITabBarController
+        window?.rootViewController = vc
         self.window?.makeKeyAndVisible()
     }
     @objc func logOutSuccessNotifactionHandler(notification: Notification){
@@ -70,11 +71,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func goToAuth() {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let mainView = LoginViewController(nibName: nil, bundle: nil)
-        let nav = UINavigationController()
-        nav.viewControllers = [mainView]
-        self.window!.rootViewController = nav
+        let vc = UIStoryboard(name: "Auth", bundle: nil).instantiateViewController(withIdentifier: "AuthNavigationController") as? UINavigationController
+        window?.rootViewController = vc
         self.window?.makeKeyAndVisible()
     }
     
