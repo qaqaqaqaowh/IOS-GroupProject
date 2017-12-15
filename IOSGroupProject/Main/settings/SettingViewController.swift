@@ -63,7 +63,7 @@ class SettingViewController: UIViewController {
                 let latitude = location["latitude"] as? String,
                 let numOfRooms = validData["numOfRooms"] as? String,
                 let size = validData["size"] as? String else {return}
-            let longtitudeSetting = Setting(withCriteria: "Longtitude", withValue: longtitude)
+            let longtitudeSetting = Setting(withCriteria: "Longitude", withValue: longtitude)
             let latitudeSetting = Setting(withCriteria: "Latitude", withValue: latitude)
             let numOfRoomsSetting = Setting(withCriteria: "Number Of Rooms", withValue: numOfRooms)
             let sizeSetting = Setting(withCriteria: "Size", withValue: size)
@@ -161,12 +161,32 @@ extension SettingViewController: UITableViewDelegate {
             let selectedSetting = settings[indexPath.row]
             if selectedSetting.criteria == "Latituide" || selectedSetting.criteria == "Longtitude" {
                 // Display map
-                // Change value
             } else if selectedSetting.criteria == "Number Of Rooms" {
                 // Prompt number of rooms
             } else if selectedSetting.criteria == "Size" {
                 // Prompt size of property
             }
         }
+    }
+}
+
+extension SettingViewController: MapViewPassCoordDelegate {
+    func passCoord(withLogitude: String, withLatitude: String) {
+        for cell in searchTableView.visibleCells {
+            let searchCell = cell as! SearchTableViewCell
+            if searchCell.criteriaLabel.text == "Longitude" {
+                searchCell.valueLabel.text = withLogitude
+            } else if searchCell.criteriaLabel.text == "Latitude" {
+                searchCell.valueLabel.text = withLatitude
+            }
+        }
+        for setting in settings {
+            if setting.criteria == "Longitude" {
+                setting.criteria = withLogitude
+            } else if setting.criteria == "Latitude" {
+                setting.criteria = withLatitude
+            }
+        }
+        searchTableView.reloadData()
     }
 }
