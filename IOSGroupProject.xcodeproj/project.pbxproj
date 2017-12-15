@@ -21,6 +21,8 @@
 		A1D5BEF21FE0B660004C8C77 /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D5BEF11FE0B660004C8C77 /* Pods_IOSGroupProject.framework */; };
 		A1D5BEF31FE0B66B004C8C77 /* ListingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BDA1FDF8B6C00CC8652 /* ListingsViewController.swift */; };
 		A1D5BEF51FE0D989004C8C77 /* UploadVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */; };
+		A1DFCC2E1FE3894800FCECFD /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */; };
+		A1DFCC301FE38AC500FCECFD /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC2F1FE38AC500FCECFD /* Setting.swift */; };
 		EB5856111FE37086007215D1 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB5856101FE37085007215D1 /* Auth.storyboard */; };
 		EB5856201FE3727E007215D1 /* EBGaramond-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB5856191FE37228007215D1 /* EBGaramond-Regular.ttf */; };
 		EB884D981FDF98F70047D618 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB884D971FDF98F70047D618 /* LoginViewController.swift */; };
@@ -49,6 +51,8 @@
 		A1D200401FE27120003251D1 /* ContactInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactInfo.swift; sourceTree = "<group>"; };
 		A1D5BEF11FE0B660004C8C77 /* Pods_IOSGroupProject.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_IOSGroupProject.framework; path = "../../../Library/Developer/Xcode/DerivedData/IOSGroupProject-fxplawvokjumrhbhaibowtecsbev/Build/Products/Debug-iphonesimulator/Pods_IOSGroupProject.framework"; sourceTree = "<group>"; };
 		A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadVideoViewController.swift; sourceTree = "<group>"; };
+		A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
+		A1DFCC2F1FE38AC500FCECFD /* Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 		EB5856101FE37085007215D1 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		EB5856141FE37227007215D1 /* EBGaramond-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-SemiBold.ttf"; sourceTree = "<group>"; };
 		EB5856151FE37227007215D1 /* EBGaramond-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Bold.ttf"; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 				A1D200401FE27120003251D1 /* ContactInfo.swift */,
 				A1D2003E1FE26F38003251D1 /* SettingTableViewCell.swift */,
 				A1D2003C1FE26EA1003251D1 /* SettingViewController.swift */,
+				A1DFCC2F1FE38AC500FCECFD /* Setting.swift */,
+				A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */,
 				A1C43BE21FDF8B6C00CC8652 /* Assets.xcassets */,
 				A1C43BE41FDF8B6C00CC8652 /* LaunchScreen.storyboard */,
 				EB884DAA1FDF9CA20047D618 /* GoogleService-Info.plist */,
@@ -321,9 +327,11 @@
 				EB884D981FDF98F70047D618 /* LoginViewController.swift in Sources */,
 				A1D2003D1FE26EA1003251D1 /* SettingViewController.swift in Sources */,
 				A1D200411FE27120003251D1 /* ContactInfo.swift in Sources */,
+				A1DFCC301FE38AC500FCECFD /* Setting.swift in Sources */,
 				EB884DA31FDF9AD20047D618 /* Extensions.swift in Sources */,
 				EB884DA11FDF9AA20047D618 /* Notification.swift in Sources */,
 				A1C43BF41FDFB5B700CC8652 /* ListingTableViewCell.swift in Sources */,
+				A1DFCC2E1FE3894800FCECFD /* SearchTableViewCell.swift in Sources */,
 				A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */,
 				A1C43BF01FDF968700CC8652 /* Listing.swift in Sources */,
 				A1C43BF21FDFAB1200CC8652 /* DetailViewController.swift in Sources */,
