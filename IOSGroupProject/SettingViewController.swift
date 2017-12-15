@@ -14,11 +14,15 @@ class SettingViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var searchTableView: UITableView!
+    
     var editingStat = false
     
     let titleArray = ["Name","Email"]
     
     var infos: [ContactInfo] = []
+    
+    var settings: [Setting] = []
     
     let ref = Database.database().reference()
 
@@ -26,7 +30,10 @@ class SettingViewController: UIViewController {
         super.viewDidLoad()
         requireLogin()
         tableView.dataSource = self
+        searchTableView.dataSource = self
+        searchTableView.delegate = self
         getInfos()
+        getSettings()
         // Do any additional setup after loading the view.
     }
     
@@ -44,6 +51,32 @@ class SettingViewController: UIViewController {
                 let indexPath1 = IndexPath(row: self.infos.count - 2, section: 0)
                 let indexPath2 = IndexPath(row: self.infos.count - 1, section: 0)
                 self.tableView.insertRows(at: [indexPath1, indexPath2], with: .right)
+            }
+        })
+    }
+    
+    func getSettings() {
+        ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").observeSingleEvent(of: .value, with: { (data) in
+            guard let validData = data.value as? [String:Any],
+                let location = validData["location"] as? [String:Any],
+                let longtitude = location["longtitude"] as? String,
+                let latitude = location["latitude"] as? String,
+                let numOfRooms = validData["numOfRooms"] as? String,
+                let size = validData["size"] as? String else {return}
+            let longtitudeSetting = Setting(withCriteria: "Longtitude", withValue: longtitude)
+            let latitudeSetting = Setting(withCriteria: "Latitude", withValue: latitude)
+            let numOfRoomsSetting = Setting(withCriteria: "Number Of Rooms", withValue: numOfRooms)
+            let sizeSetting = Setting(withCriteria: "Size", withValue: size)
+            DispatchQueue.main.async {
+                self.settings.append(longtitudeSetting)
+                self.settings.append(latitudeSetting)
+                self.settings.append(numOfRoomsSetting)
+                self.settings.append(sizeSetting)
+                let indexPath1 = IndexPath(row: self.settings.count - 4, section: 0)
+                let indexPath2 = IndexPath(row: self.settings.count - 3, section: 0)
+                let indexPath3 = IndexPath(row: self.settings.count - 2, section: 0)
+                let indexPath4 = IndexPath(row: self.settings.count - 1, section: 0)
+                self.searchTableView.insertRows(at: [indexPath1,indexPath2,indexPath3,indexPath4], with: .right)
             }
         })
     }
@@ -67,8 +100,10 @@ class SettingViewController: UIViewController {
     @IBAction func segmentControll(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             tableView.isHidden = false
+            searchTableView.isHidden = true
         } else {
             tableView.isHidden = true
+            searchTableView.isHidden = false
         }
     }
     
@@ -100,18 +135,53 @@ class SettingViewController: UIViewController {
 
 extension SettingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return infos.count
+        if tableView == tableView {
+            return infos.count
+        } else if searchTableView == tableView {
+            return settings.count
+        } else {
+            return 0
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SettingTableViewCell
-        let selectedInfo = infos[indexPath.row]
-        if editingStat {
-            cell.textField.isUserInteractionEnabled = true
+        if tableView == tableView {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SettingTableViewCell
+            let selectedInfo = infos[indexPath.row]
+            if editingStat {
+                cell.textField.isUserInteractionEnabled = true
+            } else {
+                cell.textField.isUserInteractionEnabled = false
+            }
+            cell.titleLabel.text = selectedInfo.title
+            cell.textField.text = selectedInfo.info
+            return cell
         } else {
-            cell.textField.isUserInteractionEnabled = false
+            let cell = searchTableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath) as! SearchTableViewCell
+            let selectedSetting = settings[indexPath.row]
+            if editingStat {
+                cell.isUserInteractionEnabled = true
+            } else {
+                cell.isUserInteractionEnabled = false
+            }
+            cell.criteriaLabel.text = selectedSetting.criteria
+            cell.valueLabel.text = String(describing: selectedSetting.value)
+            return cell
         }
-        cell.titleLabel.text = selectedInfo.title
-        cell.textField.text = selectedInfo.info
-        return cell
+    }
+}
+
+extension SettingViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView == searchTableView {
+            let selectedSetting = settings[indexPath.row]
+            if selectedSetting.criteria == "Latituide" || selectedSetting.criteria == "Longtitude" {
+                // Display map
+                // Change value
+            } else if selectedSetting.criteria == "Number Of Rooms" {
+                // Prompt number of rooms
+            } else if selectedSetting.criteria == "Size" {
+                // Prompt size of property
+            }
+        }
     }
 }
