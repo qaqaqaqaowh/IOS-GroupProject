@@ -24,9 +24,28 @@ class SettingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        requireLogin()
         tableView.dataSource = self
-        tableView.reloadData()
+        getInfos()
         // Do any additional setup after loading the view.
+    }
+    
+    func getInfos() {
+        ref.child("users").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (data) in
+            guard let validData = data.value as? [String:Any],
+                let email = validData["email"] as? String,
+            let infosDict = validData["infos"] as? [String:Any],
+            let name = infosDict["name"] as? String else {return}
+            let emailInfo = ContactInfo(withTitle: "Email", withInfo: email)
+            let nameInfo = ContactInfo(withTitle: "Name", withInfo: name)
+            DispatchQueue.main.async {
+                self.infos.append(emailInfo)
+                self.infos.append(nameInfo)
+                let indexPath1 = IndexPath(row: self.infos.count - 2, section: 0)
+                let indexPath2 = IndexPath(row: self.infos.count - 1, section: 0)
+                self.tableView.insertRows(at: [indexPath1, indexPath2], with: .right)
+            }
+        })
     }
 
     override func didReceiveMemoryWarning() {
