@@ -187,6 +187,5 @@ extension SettingViewController: MapViewPassCoordDelegate {
                 setting.criteria = withLatitude
             }
         }
-        searchTableView.reloadData()
     }
 }
