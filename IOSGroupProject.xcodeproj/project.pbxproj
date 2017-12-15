@@ -20,6 +20,7 @@
 		A1D5BEF51FE0D989004C8C77 /* UploadVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */; };
 		A1DFCC2E1FE3894800FCECFD /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */; };
 		A1DFCC301FE38AC500FCECFD /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC2F1FE38AC500FCECFD /* Setting.swift */; };
+		A1DFCC571FE3EE8D00FCECFD /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */; };
 		BEB43DA801C3D4F9E24DBBE1 /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150905815A6475375CD2BF04 /* Pods_IOSGroupProject.framework */; };
 		EB5856111FE37086007215D1 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB5856101FE37085007215D1 /* Auth.storyboard */; };
 		EB5856201FE3727E007215D1 /* EBGaramond-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB5856191FE37228007215D1 /* EBGaramond-Regular.ttf */; };
@@ -54,6 +55,7 @@
 		A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadVideoViewController.swift; sourceTree = "<group>"; };
 		A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		A1DFCC2F1FE38AC500FCECFD /* Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
+		A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = ../MapViewController.swift; sourceTree = "<group>"; };
 		EB5856101FE37085007215D1 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		EB5856191FE37228007215D1 /* EBGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Regular.ttf"; sourceTree = "<group>"; };
 		EB58561C1FE37228007215D1 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				EB58562A1FE3D0F0007215D1 /* SettingViewController.swift */,
 				A1DFCC2F1FE38AC500FCECFD /* Setting.swift */,
 				A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */,
+				A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */,
 			);
 			path = settings;
 			sourceTree = "<group>";
@@ -351,6 +354,7 @@
 				EB58562D1FE3D0F0007215D1 /* SettingTableViewCell.swift in Sources */,
 				A1C43BF41FDFB5B700CC8652 /* ListingCell.swift in Sources */,
 				A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */,
+				A1DFCC571FE3EE8D00FCECFD /* MapViewController.swift in Sources */,
 				A1C43BF01FDF968700CC8652 /* Listing.swift in Sources */,
 				A1C43BF21FDFAB1200CC8652 /* DetailViewController.swift in Sources */,
 				A1C43BE11FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld in Sources */,
