@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import FirebaseAuth
+import MapKit
 
 extension UIViewController {
     
@@ -26,6 +27,21 @@ extension UIViewController {
             let vc = storyboard?.instantiateViewController(withIdentifier: "LoginViewController")
             navigationController?.viewControllers = [vc!]
         }
+    }
+    
+    func isDistanceInRange(long1:String, lat1:String, long2:String, lat2:String, range:String) -> Bool {
+        guard let rng = Double(range),
+        let lng1 = Double(long1),
+        let lng2 = Double(long2),
+        let lt1 = Double(lat1),
+            let lt2 = Double(lat2) else {return false}
+        let location1 = CLLocation(latitude: lt1, longitude: lng1)
+        let location2 = CLLocation(latitude: lt2, longitude: lng2)
+        let distance = location1.distance(from: location2)
+        if rng >= distance {
+            return true
+        }
+        return false
     }
 }
 
