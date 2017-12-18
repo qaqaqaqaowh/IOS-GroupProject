@@ -17,7 +17,7 @@ extension ListingsViewController {
     
     
     func createPickerView(){
-        pickerView.frame = view.frame
+        pickerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height-113)
         pickerView.alpha = 0.0
         effectView.contentView.addSubview(pickerView)
     }
@@ -55,36 +55,6 @@ extension ListingsViewController {
     }
     
     
-    func navigationStyle(){
-        navigationController?.tabBarController?.tabBar.isTranslucent = false
-        navigationController?.tabBarController?.tabBar.isOpaque = true
-        navigationController?.tabBarController?.tabBar.tintColor = UIColor.white
-        navigationController?.tabBarController?.tabBar.barTintColor = UIColor(red: 255/255, green: 70/255, blue: 80/255, alpha: 1)
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.isOpaque = true
-        navigationController?.navigationBar.tintColor = UIColor.white
-        navigationController?.navigationBar.barTintColor = UIColor(red: 255/255, green: 70/255, blue: 80/255, alpha: 1)
-    }
-    
-    
-    
-    func addLetterSpacing(_ inputString: String) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: inputString)
-        attributedString.addAttribute(NSKernAttributeName, value: 2.0, range: NSMakeRange(0, attributedString.length-1))
-        return attributedString
-    }
-    
-    func createOptionsLabel(_ inputText: String) -> UILabel {
-        let label = UILabel()
-        label.text = inputText
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = UIFont(name: "EBGaramond-Regular", size: 22.0)
-        label.attributedText = addLetterSpacing(label.text!)
-        return label
-    }
-    
-    
     func createNavTitle(_ title: String){
         navTitle = createOptionsLabel(title)
         navTitle.frame = CGRect(x: 0, y: 0, width: 100, height: 44)
@@ -101,6 +71,7 @@ extension ListingsViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    
     func createSwitchButton(){
         let image = UIImage(named: "switch")
         let imageButton = UIBarButtonItem(image: image, style: .done, target: self, action: #selector(switchButtonTapped))
@@ -111,8 +82,8 @@ extension ListingsViewController {
         blurView()
     }
     
+    
     func createPickerNav(){
-        navigationStyle()
         createNavTitle("Find Properties")
         createBlurView()
         createSwitchButton()
@@ -120,7 +91,6 @@ extension ListingsViewController {
         self.pickerView.delegate = self
         self.pickerView.dataSource = self
     }
-    
 }
 
 
