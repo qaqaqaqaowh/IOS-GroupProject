@@ -62,6 +62,7 @@ class UploadVideoViewController: UIViewController {
         if let _ = mediaURL {
             uploadVideo()
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+            vc.isCurrentUserListing = true
             navigationController?.pushViewController(vc, animated: true)
         }
         else {
@@ -71,25 +72,6 @@ class UploadVideoViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
-    
-    func addLetterSpacing(_ inputString: String) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: inputString)
-        attributedString.addAttribute(NSKernAttributeName, value: 2.0, range: NSMakeRange(0, attributedString.length-1))
-        return attributedString
-    }
-    
-    
-    func createOptionsLabel(_ inputText: String) -> UILabel {
-        let label = UILabel()
-        label.text = inputText
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = UIFont(name: "EBGaramond-Regular", size: 22.0)
-        label.attributedText = addLetterSpacing(label.text!)
-        return label
-    }
-    
     
     func createNavTitle(_ title: String){
         navTitle = createOptionsLabel(title)

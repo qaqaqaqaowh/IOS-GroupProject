@@ -234,6 +234,7 @@
 				TargetAttributes = {
 					A1C43BD41FDF8B6C00CC8652 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = C545RG9LW8;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -476,6 +477,7 @@
 			baseConfigurationReference = 2D3F520D8C6D8075B7FE1DEB /* Pods-IOSGroupProject.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = C545RG9LW8;
 				INFOPLIST_FILE = IOSGroupProject/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = asd.IOSGroupProject;
@@ -489,6 +491,7 @@
 			baseConfigurationReference = 766B1E234EB2A8FDF186A096 /* Pods-IOSGroupProject.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = C545RG9LW8;
 				INFOPLIST_FILE = IOSGroupProject/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = asd.IOSGroupProject;
