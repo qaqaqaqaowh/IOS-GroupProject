@@ -41,8 +41,7 @@ class SettingViewController: UIViewController {
         ref.child("users").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (data) in
             guard let validData = data.value as? [String:Any],
                 let email = validData["email"] as? String,
-            let infoDict = validData["info"] as? [String:Any],
-            let name = infoDict["name"] as? String else {return}
+            let name = validData["name"] as? String else {return}
             let emailInfo = ContactInfo(withTitle: "Email", withInfo: email)
             let nameInfo = ContactInfo(withTitle: "Name", withInfo: name)
             DispatchQueue.main.async {
@@ -59,16 +58,16 @@ class SettingViewController: UIViewController {
         ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").observeSingleEvent(of: .value, with: { (data) in
             guard let validData = data.value as? [String:Any],
                 let location = validData["location"] as? [String:Any],
-                let longtitude = location["longtitude"] as? String,
+                let longitude = location["longitude"] as? String,
                 let latitude = location["latitude"] as? String,
                 let numOfRooms = validData["numOfRooms"] as? String,
                 let size = validData["size"] as? String else {return}
-            let longtitudeSetting = Setting(withCriteria: "Longitude", withValue: longtitude)
+            let longitudeSetting = Setting(withCriteria: "Longitude", withValue: longitude)
             let latitudeSetting = Setting(withCriteria: "Latitude", withValue: latitude)
             let numOfRoomsSetting = Setting(withCriteria: "Number Of Rooms", withValue: numOfRooms)
             let sizeSetting = Setting(withCriteria: "Size", withValue: size)
             DispatchQueue.main.async {
-                self.settings.append(longtitudeSetting)
+                self.settings.append(longitudeSetting)
                 self.settings.append(latitudeSetting)
                 self.settings.append(numOfRoomsSetting)
                 self.settings.append(sizeSetting)
@@ -108,8 +107,24 @@ class SettingViewController: UIViewController {
                     ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["email":info.info])
                 }
             }
+            for (index, cell) in searchTableView.visibleCells.enumerated() {
+                guard let validCell = cell as? SearchTableViewCell else {return}
+                settings[index].value = validCell.valueLabel.text
+            }
+            for setting in settings {
+                if setting.criteria == "Longitude" {
+                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").child("location").updateChildValues(["longitude":setting.value])
+                } else if setting.criteria == "Latitude" {
+                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").child("location").updateChildValues(["latitude":setting.value])
+                } else if setting.criteria == "Number Of Rooms" {
+                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").updateChildValues(["numOfRooms":setting.value])
+                } else if setting.criteria == "Size" {
+                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").updateChildValues(["size":setting.value])
+                }
+            }
         }
         tableView.reloadData()
+        searchTableView.reloadData()
     }
     
     
@@ -120,7 +135,7 @@ class SettingViewController: UIViewController {
 
 extension SettingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == tableView {
+        if tableView == self.tableView {
             return info.count
         } else if searchTableView == tableView {
             return settings.count
@@ -129,7 +144,7 @@ extension SettingViewController: UITableViewDataSource {
         }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if tableView == tableView {
+        if tableView == self.tableView {
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SettingTableViewCell
             let selectedInfo = info[indexPath.row]
             if editingStat {
@@ -159,7 +174,7 @@ extension SettingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == searchTableView {
             let selectedSetting = settings[indexPath.row]
-            if selectedSetting.criteria == "Latituide" || selectedSetting.criteria == "Longtitude" {
+            if selectedSetting.criteria == "Latituide" || selectedSetting.criteria == "Longitude" {
                 // Display map
             } else if selectedSetting.criteria == "Number Of Rooms" {
                 // Prompt number of rooms
