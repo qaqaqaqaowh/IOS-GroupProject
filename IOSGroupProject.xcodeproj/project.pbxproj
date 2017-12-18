@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840F74573A2D43EF8E4C7F3F /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2093FBF3E23B48E47232124 /* Pods_IOSGroupProject.framework */; };
 		A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BD81FDF8B6C00CC8652 /* AppDelegate.swift */; };
 		A1C43BDE1FDF8B6C00CC8652 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1C43BDC1FDF8B6C00CC8652 /* Main.storyboard */; };
 		A1C43BE11FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BDF1FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld */; };
@@ -15,12 +16,11 @@
 		A1C43BF01FDF968700CC8652 /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BEF1FDF968700CC8652 /* Listing.swift */; };
 		A1C43BF21FDFAB1200CC8652 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BF11FDFAB1200CC8652 /* DetailViewController.swift */; };
 		A1C43BF41FDFB5B700CC8652 /* ListingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BF31FDFB5B700CC8652 /* ListingCell.swift */; };
-		A1D5BEF21FE0B660004C8C77 /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D5BEF11FE0B660004C8C77 /* Pods_IOSGroupProject.framework */; };
 		A1D5BEF31FE0B66B004C8C77 /* ListingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BDA1FDF8B6C00CC8652 /* ListingsViewController.swift */; };
 		A1D5BEF51FE0D989004C8C77 /* UploadVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */; };
 		A1DFCC2E1FE3894800FCECFD /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */; };
 		A1DFCC301FE38AC500FCECFD /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC2F1FE38AC500FCECFD /* Setting.swift */; };
-		BEB43DA801C3D4F9E24DBBE1 /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 150905815A6475375CD2BF04 /* Pods_IOSGroupProject.framework */; };
+		A1DFCC571FE3EE8D00FCECFD /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */; };
 		EB5856111FE37086007215D1 /* Auth.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB5856101FE37085007215D1 /* Auth.storyboard */; };
 		EB5856201FE3727E007215D1 /* EBGaramond-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB5856191FE37228007215D1 /* EBGaramond-Regular.ttf */; };
 		EB5856241FE38B6E007215D1 /* ListingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB5856231FE38B6E007215D1 /* ListingCell.xib */; };
@@ -36,7 +36,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		150905815A6475375CD2BF04 /* Pods_IOSGroupProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IOSGroupProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D3F520D8C6D8075B7FE1DEB /* Pods-IOSGroupProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSGroupProject.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IOSGroupProject/Pods-IOSGroupProject.debug.xcconfig"; sourceTree = "<group>"; };
 		766B1E234EB2A8FDF186A096 /* Pods-IOSGroupProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSGroupProject.release.xcconfig"; path = "Pods/Target Support Files/Pods-IOSGroupProject/Pods-IOSGroupProject.release.xcconfig"; sourceTree = "<group>"; };
 		A1C43BD51FDF8B6C00CC8652 /* IOSGroupProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOSGroupProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,10 +49,11 @@
 		A1C43BEF1FDF968700CC8652 /* Listing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Listing.swift; sourceTree = "<group>"; };
 		A1C43BF11FDFAB1200CC8652 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		A1C43BF31FDFB5B700CC8652 /* ListingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListingCell.swift; sourceTree = "<group>"; };
-		A1D5BEF11FE0B660004C8C77 /* Pods_IOSGroupProject.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_IOSGroupProject.framework; path = "../../../Library/Developer/Xcode/DerivedData/IOSGroupProject-fxplawvokjumrhbhaibowtecsbev/Build/Products/Debug-iphonesimulator/Pods_IOSGroupProject.framework"; sourceTree = "<group>"; };
 		A1D5BEF41FE0D989004C8C77 /* UploadVideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadVideoViewController.swift; sourceTree = "<group>"; };
 		A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		A1DFCC2F1FE38AC500FCECFD /* Setting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
+		A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = ../MapViewController.swift; sourceTree = "<group>"; };
+		A2093FBF3E23B48E47232124 /* Pods_IOSGroupProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IOSGroupProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5856101FE37085007215D1 /* Auth.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Auth.storyboard; sourceTree = "<group>"; };
 		EB5856191FE37228007215D1 /* EBGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Regular.ttf"; sourceTree = "<group>"; };
 		EB58561C1FE37228007215D1 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
@@ -74,8 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1D5BEF21FE0B660004C8C77 /* Pods_IOSGroupProject.framework in Frameworks */,
-				BEB43DA801C3D4F9E24DBBE1 /* Pods_IOSGroupProject.framework in Frameworks */,
+				840F74573A2D43EF8E4C7F3F /* Pods_IOSGroupProject.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,8 +129,7 @@
 		B8D286711CFA5C91861EDC85 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A1D5BEF11FE0B660004C8C77 /* Pods_IOSGroupProject.framework */,
-				150905815A6475375CD2BF04 /* Pods_IOSGroupProject.framework */,
+				A2093FBF3E23B48E47232124 /* Pods_IOSGroupProject.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -153,6 +151,7 @@
 				EB58562A1FE3D0F0007215D1 /* SettingViewController.swift */,
 				A1DFCC2F1FE38AC500FCECFD /* Setting.swift */,
 				A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */,
+				A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */,
 			);
 			path = settings;
 			sourceTree = "<group>";
@@ -352,6 +351,7 @@
 				EB58562D1FE3D0F0007215D1 /* SettingTableViewCell.swift in Sources */,
 				A1C43BF41FDFB5B700CC8652 /* ListingCell.swift in Sources */,
 				A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */,
+				A1DFCC571FE3EE8D00FCECFD /* MapViewController.swift in Sources */,
 				A1C43BF01FDF968700CC8652 /* Listing.swift in Sources */,
 				A1C43BF21FDFAB1200CC8652 /* DetailViewController.swift in Sources */,
 				A1C43BE11FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld in Sources */,
