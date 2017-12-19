@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		840F74573A2D43EF8E4C7F3F /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2093FBF3E23B48E47232124 /* Pods_IOSGroupProject.framework */; };
+		A18E29B11FE91108008FABA0 /* CurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E29B01FE91108008FABA0 /* CurrentUser.swift */; };
 		A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BD81FDF8B6C00CC8652 /* AppDelegate.swift */; };
 		A1C43BDE1FDF8B6C00CC8652 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1C43BDC1FDF8B6C00CC8652 /* Main.storyboard */; };
 		A1C43BE11FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BDF1FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		2D3F520D8C6D8075B7FE1DEB /* Pods-IOSGroupProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSGroupProject.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IOSGroupProject/Pods-IOSGroupProject.debug.xcconfig"; sourceTree = "<group>"; };
 		766B1E234EB2A8FDF186A096 /* Pods-IOSGroupProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSGroupProject.release.xcconfig"; path = "Pods/Target Support Files/Pods-IOSGroupProject/Pods-IOSGroupProject.release.xcconfig"; sourceTree = "<group>"; };
+		A18E29B01FE91108008FABA0 /* CurrentUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUser.swift; sourceTree = "<group>"; };
 		A1C43BD51FDF8B6C00CC8652 /* IOSGroupProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOSGroupProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C43BD81FDF8B6C00CC8652 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1C43BDA1FDF8B6C00CC8652 /* ListingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListingsViewController.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				A1DFCC2F1FE38AC500FCECFD /* Setting.swift */,
 				A1DFCC2D1FE3894800FCECFD /* SearchTableViewCell.swift */,
 				A1DFCC561FE3EE8D00FCECFD /* MapViewController.swift */,
+				A18E29B01FE91108008FABA0 /* CurrentUser.swift */,
 			);
 			path = settings;
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				A1D5BEF51FE0D989004C8C77 /* UploadVideoViewController.swift in Sources */,
 				EB884D981FDF98F70047D618 /* LoginViewController.swift in Sources */,
 				EB58562C1FE3D0F0007215D1 /* SettingViewController.swift in Sources */,
+				A18E29B11FE91108008FABA0 /* CurrentUser.swift in Sources */,
 				EB5856291FE3D0DD007215D1 /* ContactInfo.swift in Sources */,
 				A1DFCC301FE38AC500FCECFD /* Setting.swift in Sources */,
 				EB884DA31FDF9AD20047D618 /* Extensions.swift in Sources */,
