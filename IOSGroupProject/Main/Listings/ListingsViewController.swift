@@ -31,17 +31,27 @@ class ListingsViewController: UIViewController {
     
     func observeListings() {
         ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
-            guard let listings = snapshot.value as? [String:Any],
-            let urlString = listings["videoURL"] as? String,
-            let name = listings["name"] as? String,
-            let ownerUID = listings["owner"] as? String,
-            let thumbURL = listings["thumb"] as? String,
-            let url = URL(string: thumbURL) else {return}
+            guard let selectedListing = snapshot.value as? [String:Any],
+                let location  = selectedListing["location"] as? [String:Any],
+                let images    = selectedListing["images"] as? [String:Any],
+                let owner     = selectedListing["owner"] as? String,
+                let videoUrl  = selectedListing["videoURL"] as? String,
+                let price     = selectedListing["price"] as? String,
+                let squareFt  = selectedListing["squareFt"] as? String,
+                let bedrooms  = selectedListing["bedrooms"] as? String,
+                let latitude  = location["latitude"] as? String,
+                let longitude = location["longitude"] as? String
+                
+//                let url = URL(string: thumbURL)
+            else {return}
+            
+            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: ["https://firebasestorage.googleapis.com/v0/b/cribs-53001.appspot.com/o/images%2F-L0d_5iR65CpX9QUdJnA?alt=media&token=98173745-5128-478e-8822-db4d3ad0824f"], price: price, latitude: latitude, longitude: longitude, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+            guard let url = URL(string: newListing.imageURLS[0])
+                else{return}
             let manager = URLSession.shared
             let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
                 if let validData = data,
                     let image = UIImage(data: validData){
-                    let newListing = Listing(withURLString: urlString, withName: name, withOwner: ownerUID, withThumb: image)
                     DispatchQueue.main.async {
                         self.listings.append(newListing)
                         let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
@@ -66,8 +76,7 @@ extension ListingsViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ListingTableViewCell
         let selectedListing = listings[indexPath.row]
         cell.listing = selectedListing
-        cell.nameLabel.text = selectedListing.name
-        cell.videoView.image = selectedListing.thumbImage
+        cell.videoView.image = selectedListing.images[0]
         cell.delegate = self
         return cell
     }

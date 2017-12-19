@@ -18,7 +18,7 @@ class ListingTableViewCell: UITableViewCell {
     
     @IBOutlet weak var videoView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
-    var listing: Listing = Listing(withURLString: "", withName: "", withOwner: "", withThumb: nil)
+    var listing: Listing = Listing()
     var player = AVPlayer()
     let controller = AVPlayerViewController()
     var delegate: ShowDetailDelegate?

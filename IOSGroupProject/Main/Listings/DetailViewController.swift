@@ -7,59 +7,58 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseDatabase
+import FirebaseStorage
 
 class DetailViewController: UIViewController {
     
     
-    var imageArray : [String] = ["house1", "house2"]
-    let criteraArray : [String] = ["Location", "Price", "Bedrooms", "Square ft."]
-    var criteria : [String : String] = ["Location" : "Location", "Price" : "", "Bedrooms" : "", "Square ft." : ""]
-    let criteriaBool : [String : Bool] = ["Location" : false, "Price" : false, "Bedrooms" : false, "Square ft." : false]
-    var isCurrentUserListing : Bool = true
+    let tap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
+    var dictionary : [String : String] = ["Location" : "Location", "Price" : "Price", "Bedrooms" : "Bedrooms", "Square ft." : "Square ft.", "Email" : "email@email.com"]
+    var features : [String] = ["Location", "Price", "Bedrooms", "Square ft.", "Email"]
+    var selectedListing : Listing = Listing()
     var canEditItems : Bool = false
     var navTitle : UILabel = UILabel()
+    var mediaURL: URL?
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
     let pageControl : UIPageControl = UIPageControl()
-
+    
     
     func createPageControll(){
-        if imageArray.count > 1 {
+        if selectedListing.images.count > 1 {
             pageControl.removeFromSuperview()
             pageControl.isUserInteractionEnabled = false
             let scrollViewHeight: CGFloat = 35
             pageControl.frame = CGRect(x: scrollView.frame.width/2 , y: scrollView.frame.height-scrollViewHeight, width: scrollView.frame.width, height: scrollViewHeight)
             pageControl.center = CGPoint(x: view.center.x, y: pageControl.center.y)
             pageControl.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 0.3)
-            pageControl.numberOfPages = imageArray.count
+            pageControl.numberOfPages = selectedListing.images.count
             view.addSubview(pageControl)
         }
     }
-    
-    
     func addItemsToScrollView() {
         for view in scrollView.subviews {
             view.removeFromSuperview()
         }
         let scrollViewWidth: CGFloat = self.scrollView.frame.width
         let scrollViewHeight :CGFloat = self.scrollView.frame.height
-        for i in 0..<imageArray.count {
+        for i in 0..<selectedListing.images.count {
             let newImageView = UIImageView(frame: CGRect(x: CGFloat(i)*scrollViewWidth, y:0, width: scrollViewWidth, height: scrollViewHeight ))
-            newImageView.image = UIImage(named: imageArray[i])
-            if imageArray[i] == "tap" {
+            newImageView.image = selectedListing.images[i]
+            if selectedListing.images[i] == UIImage(named: "tap") {
                 newImageView.contentMode = .center
             }
             scrollView.addSubview(newImageView)
         }
-        self.scrollView.contentSize = CGSize(width:self.scrollView.frame.width * CGFloat(imageArray.count), height: self.scrollView.frame.height)
+        self.scrollView.contentSize = CGSize(width:self.scrollView.frame.width * CGFloat(selectedListing.images.count), height: self.scrollView.frame.height)
         scrollView.bounces = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isPagingEnabled = true
         self.scrollView.delegate = self
         createPageControll()
     }
-    
-    
     func createNavTitle(_ title: String){
         navTitle = createOptionsLabel(title)
         navTitle.frame = CGRect(x: 0, y: 0, width: 100, height: 44)
@@ -67,12 +66,18 @@ class DetailViewController: UIViewController {
     }
     
     
+    
+    
+    
+    
+    
+    
     func createSaveButton(){
         let button = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.rightBarButtonItem = button
     }
     @objc func saveButtonTapped(){
-        
+
     }
     
     
@@ -82,14 +87,48 @@ class DetailViewController: UIViewController {
     }
     @objc func editButtonTapped(){
         if canEditItems {
+            if selectedListing.images.count == 1 {
+                let alert = UIAlertController(title: "Error", message: "You must upload images", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(ok)
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+            for feature in features {
+                if dictionary[feature] == feature || dictionary[feature] == "" {
+                    let alert = UIAlertController(title: "Error", message: "You must specify \(feature)", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+            }
+            let ref = Database.database().reference()
+            selectedListing.listingId = ref.child("listings").childByAutoId().key
+            guard let currentUser = Auth.auth().currentUser?.uid
+                else{return}
+            uploadVideo {
+                self.selectedListing.price = self.dictionary["Price"]!
+                //Change to real lat and long
+                self.selectedListing.owner = currentUser
+                self.selectedListing.latitude = self.dictionary["Location"]!
+                self.selectedListing.longitude = self.dictionary["Location"]!
+                
+                self.selectedListing.bedrooms = self.dictionary["Bedrooms"]!
+                self.selectedListing.squareFt = self.dictionary["Square ft."]!
+                self.selectedListing.saveToDatabase()
+            }
+            selectedListing.images.remove(at: 0)
             navigationItem.rightBarButtonItem?.title = "Edit"
-            imageArray.remove(at: 0)
             addItemsToScrollView()
+            scrollView.removeGestureRecognizer(tap)
             tableView.reloadData()
+            
         }
         else {
             navigationItem.rightBarButtonItem?.title = "Finish"
-            imageArray.insert("tap", at: 0)
+            selectedListing.images.insert(UIImage(named: "tap")!, at: 0)
+            scrollView.addGestureRecognizer(tap)
             addItemsToScrollView()
             scrollView.contentOffset = CGPoint(x: 0, y: 0)
             pageControl.currentPage = 0
@@ -99,24 +138,71 @@ class DetailViewController: UIViewController {
     }
     
     
+    func uploadVideo(completion: @escaping () -> Void) {
+        let ref = Database.database().reference()
+        let listingID = ref.child("listings").childByAutoId().key
+        let storageRef = Storage.storage().reference()
+        guard let url = mediaURL
+            else {return}
+        storageRef.child("videos").child(listingID).putFile(from: url, metadata: nil) { (metadata, error) in
+            guard let videoURL = metadata?.downloadURL()
+                else {return}
+            self.selectedListing.videoURL = videoURL.absoluteString
+        }
+        for i in 0..<selectedListing.images.count {
+            guard let validData = UIImagePNGRepresentation(selectedListing.images[i])
+                else { return }
+            let folder = listingID
+            let imgRef = storageRef.child("images/\(folder)/\(i).jpg")
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpeg"
+            imgRef.putData(validData, metadata: metadata, completion: { (metadata, error) in
+                guard let imageURL = metadata?.downloadURL()
+                    else {return}
+                self.selectedListing.imageURLS.append(imageURL.absoluteString)
+            })
+        }
+    }
+
+    
+    func dealWithTypes(){
+        switch selectedListing.status {
+        case .new:
+            editButtonTapped()
+            createEditButton()
+        case .owned:
+            createEditButton()
+        case .other:
+            createSaveButton()
+        case .saved:
+            createSaveButton()
+        }
+    }
+    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-        createNavTitle("House")
+        dealWithTypes()
         tableView.dataSource = self
         tableView.delegate = self
         tableView.allowsSelectionDuringEditing = true
-        if !isCurrentUserListing {
-            createSaveButton()
-        }
-        else {
-            createEditButton()
-        }
     }
     
     
     override func viewDidAppear(_ animated: Bool) {
         addItemsToScrollView()
+    }
+    
+    
+    @objc func scrollViewTapped(){
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary),
+            let mediaType = UIImagePickerController.availableMediaTypes(for: .photoLibrary) {
+            imagePicker.mediaTypes = mediaType
+            present(imagePicker, animated: true, completion: nil)
+        }
     }
 }
 
@@ -135,15 +221,15 @@ extension DetailViewController : UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return criteria.count+1
+        return features.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row < criteraArray.count {
+        if indexPath.row < features.count-1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-            cell.textLabel?.text = criteraArray[indexPath.row]
-            if criteriaBool[criteraArray[indexPath.row]]!{
+            cell.textLabel?.text = dictionary[features[indexPath.row]]
+            if true {
                 cell.imageView?.image = UIImage(named: "true")
             } else {
                 cell.imageView?.image = UIImage(named: "false")
@@ -154,14 +240,11 @@ extension DetailViewController : UITableViewDataSource {
             return cell
         }
         else {
-            let cell = UITableViewCell(style: .value1, reuseIdentifier: "PhoneCell")
-            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "PhoneCell")
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: "emailCell")
+            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "emailCell")
             cell.textLabel?.text = "Email:"
-            cell.detailTextLabel?.text = "billy@billyGoat.com"
+            cell.detailTextLabel?.text = features[features.count-1]
             cell.imageView?.image = UIImage(named: "email")
-            if self.canEditItems {
-                cell.detailTextLabel?.textColor = UIColor.blue
-            }
             return cell
         }
     }
@@ -177,25 +260,24 @@ extension DetailViewController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if canEditItems {
-            if indexPath.row < criteraArray.count{
-                let key = criteraArray[indexPath.row]
-                guard let value = criteria[key]
-                    else {return}
-                editCritera(key, value)
+            if indexPath.row < features.count-1{
+                editCritera(indexPath.row)
             }
         }
     }
     
     
-    func editCritera(_ key: String, _ value: String) {
+    func editCritera(_ place: Int ) {
+        let key = features[place]
+        let value = dictionary[key]
         let alertController = UIAlertController(title: key, message: "", preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Save", style: .default, handler: {
             alert -> Void in
             let inputTextField = alertController.textFields![0] as UITextField
             if inputTextField.text != "" {
-                guard let name =  inputTextField.text
+                guard let newValue =  inputTextField.text
                     else{ return }
-                self.criteria[key] = name
+                self.dictionary[key] = newValue
                 self.tableView.reloadData()
             }
         }))
@@ -205,5 +287,21 @@ extension DetailViewController : UITableViewDelegate {
         })
         self.present(alertController, animated: true, completion: nil)
     }
+}
 
+
+extension DetailViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            selectedListing.images.append(selectedImage)
+            addItemsToScrollView()
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
 }
