@@ -47,9 +47,10 @@ class ListingsViewController: UIViewController {
     
     func observeListings() {
         ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
+            let group = DispatchGroup()
             guard let selectedListing = snapshot.value as? [String:Any],
                 let location  = selectedListing["location"] as? [String:Any],
-                let images    = selectedListing["images"] as? [String:Any],
+                let images    = selectedListing["images"] as? [String],
                 let owner     = selectedListing["owner"] as? String,
                 let videoUrl  = selectedListing["videoURL"] as? String,
                 let price     = selectedListing["price"] as? String,
@@ -57,25 +58,28 @@ class ListingsViewController: UIViewController {
                 let bedrooms  = selectedListing["bedrooms"] as? String,
                 let latitude  = location["latitude"] as? String,
                 let longitude = location["longitude"] as? String
-                
-//                let url = URL(string: thumbURL)
             else {return}
             
-            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: ["https://firebasestorage.googleapis.com/v0/b/cribs-53001.appspot.com/o/images%2F-L0d_5iR65CpX9QUdJnA?alt=media&token=98173745-5128-478e-8822-db4d3ad0824f"], price: price, latitude: latitude, longitude: longitude, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
-            guard let url = URL(string: newListing.imageURLS[0])
-                else{return}
-            let manager = URLSession.shared
-            let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
-                if let validData = data,
-                    let image = UIImage(data: validData){
-                    DispatchQueue.main.async {
-                        self.listings.append(newListing)
-                        let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
-                        self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, latitude: latitude, longitude: longitude, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+            
+            for imageUrl in newListing.imageURLS {
+                group.enter()
+                guard let url = URL(string: imageUrl)
+                    else{return}
+                let manager = URLSession.shared
+                let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
+                    if let validData = data, let image = UIImage(data: validData) {
+                        newListing.images.append(image)
+                        group.leave()
                     }
-                }
+                })
+                dataTask.resume()
+            }
+            group.notify(queue: .main, execute: {
+                self.listings.append(newListing)
+                let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
             })
-            dataTask.resume()
         })
     }
 }

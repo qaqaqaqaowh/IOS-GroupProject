@@ -176,7 +176,7 @@ extension SettingViewController: UITableViewDelegate {
                     textField.placeholder = "Number Of Rooms"
                 })
                 let ok = UIAlertAction(title: "OK", style: .default, handler: { (btn) in
-                    guard let int = Int((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
+                    guard let int = Double((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
                     selectedSetting.value = String(int)
                     let cell = self.searchTableView.visibleCells[indexPath.row] as! SearchTableViewCell
                     cell.valueLabel.text = String(int)
@@ -192,7 +192,7 @@ extension SettingViewController: UITableViewDelegate {
                     textField.placeholder = "Square Feet"
                 })
                 let ok = UIAlertAction(title: "OK", style: .default, handler: { (btn) in
-                    guard let int = Int((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
+                    guard let int = Double((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
                     selectedSetting.value = String(int)
                     let cell = self.searchTableView.visibleCells[indexPath.row] as! SearchTableViewCell
                     cell.valueLabel.text = String(int)
