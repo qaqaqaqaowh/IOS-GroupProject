@@ -56,29 +56,21 @@ class SettingViewController: UIViewController {
     }
     
     func getSettings() {
-        ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").observeSingleEvent(of: .value, with: { (data) in
-            guard let validData = data.value as? [String:Any],
-                let location = validData["location"] as? [String:Any],
-                let longitude = location["longitude"] as? String,
-                let latitude = location["latitude"] as? String,
-                let numOfRooms = validData["numOfRooms"] as? String,
-                let size = validData["size"] as? String else {return}
-            let longitudeSetting = Setting(withCriteria: "Longitude", withValue: longitude)
-            let latitudeSetting = Setting(withCriteria: "Latitude", withValue: latitude)
-            let numOfRoomsSetting = Setting(withCriteria: "Number Of Rooms", withValue: numOfRooms)
-            let sizeSetting = Setting(withCriteria: "Size", withValue: size)
-            DispatchQueue.main.async {
-                self.settings.append(longitudeSetting)
-                self.settings.append(latitudeSetting)
-                self.settings.append(numOfRoomsSetting)
-                self.settings.append(sizeSetting)
-                let indexPath1 = IndexPath(row: self.settings.count - 4, section: 0)
-                let indexPath2 = IndexPath(row: self.settings.count - 3, section: 0)
-                let indexPath3 = IndexPath(row: self.settings.count - 2, section: 0)
-                let indexPath4 = IndexPath(row: self.settings.count - 1, section: 0)
-                self.searchTableView.insertRows(at: [indexPath1,indexPath2,indexPath3,indexPath4], with: .right)
-            }
-        })
+        let longitudeSetting = Setting(withCriteria: "Longitude", withValue: CurrentUser.longitude)
+        let latitudeSetting = Setting(withCriteria: "Latitude", withValue: CurrentUser.latitude)
+        let numOfRoomsSetting = Setting(withCriteria: "Number Of Rooms", withValue: CurrentUser.numOfRooms)
+        let sizeSetting = Setting(withCriteria: "Size", withValue: CurrentUser.size)
+        DispatchQueue.main.async {
+            self.settings.append(longitudeSetting)
+            self.settings.append(latitudeSetting)
+            self.settings.append(numOfRoomsSetting)
+            self.settings.append(sizeSetting)
+            let indexPath1 = IndexPath(row: self.settings.count - 4, section: 0)
+            let indexPath2 = IndexPath(row: self.settings.count - 3, section: 0)
+            let indexPath3 = IndexPath(row: self.settings.count - 2, section: 0)
+            let indexPath4 = IndexPath(row: self.settings.count - 1, section: 0)
+            self.searchTableView.insertRows(at: [indexPath1,indexPath2,indexPath3,indexPath4], with: .right)
+        }
     }
     
     @IBAction func segmentControll(_ sender: UISegmentedControl) {
@@ -115,22 +107,21 @@ class SettingViewController: UIViewController {
             for setting in settings {
                 if setting.criteria == "Longitude" {
                     ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").child("location").updateChildValues(["longitude":setting.value])
+                    CurrentUser.longitude = setting.value as! String
                 } else if setting.criteria == "Latitude" {
                     ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").child("location").updateChildValues(["latitude":setting.value])
+                    CurrentUser.latitude = setting.value as! String
                 } else if setting.criteria == "Number Of Rooms" {
                     ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").updateChildValues(["numOfRooms":setting.value])
+                    CurrentUser.numOfRooms = setting.value as! String
                 } else if setting.criteria == "Size" {
                     ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").updateChildValues(["size":setting.value])
+                    CurrentUser.size = setting.value as! String
                 }
             }
         }
         tableView.reloadData()
         searchTableView.reloadData()
-    }
-    
-    
-    @IBAction func addButtonAction(_ sender: UIBarButtonItem) {
-        
     }
 }
 

@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 class ListingsViewController: UIViewController {
     
@@ -26,8 +27,23 @@ class ListingsViewController: UIViewController {
         tableView.dataSource = self
         observeListings()
         createPickerNav()
+        getSettings()
     }
     
+    func getSettings() {
+        ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").observeSingleEvent(of: .value, with: { (data) in
+            guard let validData = data.value as? [String:Any],
+                let location = validData["location"] as? [String:Any],
+                let longitude = location["longitude"] as? String,
+                let latitude = location["latitude"] as? String,
+                let numOfRooms = validData["numOfRooms"] as? String,
+                let size = validData["size"] as? String else {return}
+            CurrentUser.longitude = longitude
+            CurrentUser.latitude = latitude
+            CurrentUser.numOfRooms = numOfRooms
+            CurrentUser.size = size
+        })
+    }
     
     func observeListings() {
         ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
