@@ -41,6 +41,17 @@ class MapViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func getLocationFromAddress(withAddress: String) {
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(withAddress) { (placemarks, error) in
+            if placemarks != nil {
+                let location = placemarks?.first?.location
+                self.delegate?.passCoord(withLogitude: String(describing: location?.coordinate.longitude), withLatitude: String(describing: location?.coordinate.latitude))
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+    
 
     /*
     // MARK: - Navigation
