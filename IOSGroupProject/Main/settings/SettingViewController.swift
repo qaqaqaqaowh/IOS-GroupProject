@@ -32,6 +32,7 @@ class SettingViewController: UIViewController {
         tableView.dataSource = self
         searchTableView.dataSource = self
         searchTableView.delegate = self
+        searchTableView.isHidden = true
         getInfo()
         getSettings()
         // Do any additional setup after loading the view.
@@ -102,7 +103,7 @@ class SettingViewController: UIViewController {
             }
             for info in info {
                 if info.title == "Name" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("infos").updateChildValues(["name":info.info])
+                    ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["name":info.info])
                 } else if info.title == "Email" {
                     ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["email":info.info])
                 }
@@ -164,7 +165,7 @@ extension SettingViewController: UITableViewDataSource {
                 cell.isUserInteractionEnabled = false
             }
             cell.criteriaLabel.text = selectedSetting.criteria
-            cell.valueLabel.text = String(describing: selectedSetting.value)
+            cell.valueLabel.text = selectedSetting.value as? String
             return cell
         }
     }
@@ -175,11 +176,41 @@ extension SettingViewController: UITableViewDelegate {
         if tableView == searchTableView {
             let selectedSetting = settings[indexPath.row]
             if selectedSetting.criteria == "Latituide" || selectedSetting.criteria == "Longitude" {
-                // Display map
+                let vc = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+                vc.delegate = self
+                navigationController?.pushViewController(vc, animated: true)
             } else if selectedSetting.criteria == "Number Of Rooms" {
-                // Prompt number of rooms
+                let alert = UIAlertController(title: "Number Of Rooms", message: "", preferredStyle: .alert)
+                alert.addTextField(configurationHandler: { (textField) in
+                    textField.placeholder = "Number Of Rooms"
+                })
+                let ok = UIAlertAction(title: "OK", style: .default, handler: { (btn) in
+                    guard let int = Int((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
+                    selectedSetting.value = String(int)
+                    let cell = self.searchTableView.visibleCells[indexPath.row] as! SearchTableViewCell
+                    cell.valueLabel.text = String(int)
+                    self.searchTableView.reloadData()
+                })
+                let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+                alert.addAction(ok)
+                alert.addAction(cancel)
+                present(alert, animated: true, completion: nil)
             } else if selectedSetting.criteria == "Size" {
-                // Prompt size of property
+                let alert = UIAlertController(title: "Size", message: "", preferredStyle: .alert)
+                alert.addTextField(configurationHandler: { (textField) in
+                    textField.placeholder = "Square Feet"
+                })
+                let ok = UIAlertAction(title: "OK", style: .default, handler: { (btn) in
+                    guard let int = Int((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
+                    selectedSetting.value = String(int)
+                    let cell = self.searchTableView.visibleCells[indexPath.row] as! SearchTableViewCell
+                    cell.valueLabel.text = String(int)
+                    self.searchTableView.reloadData()
+                })
+                let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+                alert.addAction(ok)
+                alert.addAction(cancel)
+                present(alert, animated: true, completion: nil)
             }
         }
     }
@@ -187,20 +218,13 @@ extension SettingViewController: UITableViewDelegate {
 
 extension SettingViewController: MapViewPassCoordDelegate {
     func passCoord(withLogitude: String, withLatitude: String) {
-        for cell in searchTableView.visibleCells {
-            let searchCell = cell as! SearchTableViewCell
-            if searchCell.criteriaLabel.text == "Longitude" {
-                searchCell.valueLabel.text = withLogitude
-            } else if searchCell.criteriaLabel.text == "Latitude" {
-                searchCell.valueLabel.text = withLatitude
-            }
-        }
         for setting in settings {
             if setting.criteria == "Longitude" {
-                setting.criteria = withLogitude
+                setting.value = withLogitude
             } else if setting.criteria == "Latitude" {
-                setting.criteria = withLatitude
+                setting.value = withLatitude
             }
         }
+        searchTableView.reloadData()
     }
 }
