@@ -17,12 +17,16 @@ class ListingTableViewCell: UITableViewCell {
     
     
     @IBOutlet weak var videoView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
     var listing: Listing = Listing()
     var player = AVPlayer()
     let controller = AVPlayerViewController()
     var delegate: ShowDetailDelegate?
     
+    @IBOutlet weak var locationImageView: UIImageView!
+    @IBOutlet weak var priceImageView: UIImageView!
+    @IBOutlet weak var bedroomsImageView: UIImageView!
+    @IBOutlet weak var squareFtImageView: UIImageView!
+
     
     func createSwipeRecognizer(){
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(cellSwiped))

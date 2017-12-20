@@ -9,213 +9,164 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import MapKit
 
 class SettingViewController: UIViewController {
     
+    
     @IBOutlet weak var tableView: UITableView!
-    
-    @IBOutlet weak var searchTableView: UITableView!
-    
-    var editingStat = false
-    
-    let titleArray = ["Name","Email"]
-    
-    var info: [ContactInfo] = []
-    
-    var settings: [Setting] = []
-    
+    var settingsDictionary : [String : Any] = ["Location" : CLLocationCoordinate2D(), "Price" : "Price", "Bedrooms" : "Bedrooms", "Square ft." : "Square ft."]
+    var features : [String] = ["Location", "Price", "Bedrooms", "Square ft."]
+    var navTitle : UILabel = UILabel()
     let ref = Database.database().reference()
 
+    
+    func createNavTitle(_ title: String){
+        navTitle = createOptionsLabel(title)
+        navTitle.frame = CGRect(x: 0, y: 0, width: 100, height: 44)
+        self.navigationItem.titleView = navTitle
+    }
+    
+    
+    func createEditButton(){
+        let button = UIBarButtonItem(title: "Edit", style: .done, target: self, action: #selector(editButtonTapped))
+        navigationItem.rightBarButtonItem = button
+    }
+    @objc func editButtonTapped(){
+        if isEditing {
+            navigationItem.rightBarButtonItem?.title = "Edit"
+            saveSettings()
+            tableView.reloadData()
+        }
+        else {
+            navigationItem.rightBarButtonItem?.title = "Save"
+            tableView.reloadData()
+        }
+        isEditing = !isEditing
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        requireLogin()
+        createNavTitle("Search Settings")
+        createEditButton()
+        CurrentUser.getSettings {
+            DispatchQueue.main.async {
+                self.grabCurrentSettings()
+                self.tableView.reloadData()
+            }
+        }
         tableView.dataSource = self
-        searchTableView.dataSource = self
-        searchTableView.delegate = self
-        searchTableView.isHidden = true
-        getInfo()
-        getSettings()
+        tableView.delegate = self
+        tableView.allowsSelectionDuringEditing = true
         // Do any additional setup after loading the view.
     }
     
-    func getInfo() {
-        ref.child("users").child((Auth.auth().currentUser?.uid)!).observeSingleEvent(of: .value, with: { (data) in
-            guard let validData = data.value as? [String:Any],
-                let email = validData["email"] as? String,
-            let name = validData["name"] as? String else {return}
-            let emailInfo = ContactInfo(withTitle: "Email", withInfo: email)
-            let nameInfo = ContactInfo(withTitle: "Name", withInfo: name)
-            DispatchQueue.main.async {
-                self.info.append(emailInfo)
-                self.info.append(nameInfo)
-                let indexPath1 = IndexPath(row: self.info.count - 2, section: 0)
-                let indexPath2 = IndexPath(row: self.info.count - 1, section: 0)
-                self.tableView.insertRows(at: [indexPath1, indexPath2], with: .right)
-            }
-        })
-    }
     
-    func getSettings() {
-        let longitudeSetting = Setting(withCriteria: "Longitude", withValue: CurrentUser.longitude)
-        let latitudeSetting = Setting(withCriteria: "Latitude", withValue: CurrentUser.latitude)
-        let numOfRoomsSetting = Setting(withCriteria: "Number Of Rooms", withValue: CurrentUser.numOfRooms)
-        let sizeSetting = Setting(withCriteria: "Size", withValue: CurrentUser.size)
-        DispatchQueue.main.async {
-            self.settings.append(longitudeSetting)
-            self.settings.append(latitudeSetting)
-            self.settings.append(numOfRoomsSetting)
-            self.settings.append(sizeSetting)
-            let indexPath1 = IndexPath(row: self.settings.count - 4, section: 0)
-            let indexPath2 = IndexPath(row: self.settings.count - 3, section: 0)
-            let indexPath3 = IndexPath(row: self.settings.count - 2, section: 0)
-            let indexPath4 = IndexPath(row: self.settings.count - 1, section: 0)
-            self.searchTableView.insertRows(at: [indexPath1,indexPath2,indexPath3,indexPath4], with: .right)
-        }
-    }
-    
-    @IBAction func segmentControll(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0 {
-            tableView.isHidden = false
-            searchTableView.isHidden = true
-        } else {
-            tableView.isHidden = true
-            searchTableView.isHidden = false
-        }
-    }
-    
-    @IBAction func editButtonAction(_ sender: UIBarButtonItem) {
-        editingStat = !editingStat
-        if editingStat {
-            sender.title = "Save"
-        } else {
-            sender.title = "Edit"
-            for (index, cell) in tableView.visibleCells.enumerated() {
-                guard let validCell = cell as? SettingTableViewCell else {return}
-                info[index].info = validCell.textField.text
-            }
-            for info in info {
-                if info.title == "Name" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["name":info.info])
-                } else if info.title == "Email" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).updateChildValues(["email":info.info])
-                }
-            }
-            for (index, cell) in searchTableView.visibleCells.enumerated() {
-                guard let validCell = cell as? SearchTableViewCell else {return}
-                settings[index].value = validCell.valueLabel.text
-            }
-            for setting in settings {
-                if setting.criteria == "Longitude" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").child("location").updateChildValues(["longitude":setting.value])
-                    CurrentUser.longitude = setting.value as! String
-                } else if setting.criteria == "Latitude" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").child("location").updateChildValues(["latitude":setting.value])
-                    CurrentUser.latitude = setting.value as! String
-                } else if setting.criteria == "Number Of Rooms" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").updateChildValues(["numOfRooms":setting.value])
-                    CurrentUser.numOfRooms = setting.value as! String
-                } else if setting.criteria == "Size" {
-                    ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").updateChildValues(["size":setting.value])
-                    CurrentUser.size = setting.value as! String
-                }
-            }
-        }
+    func grabCurrentSettings() {
+        settingsDictionary["Location"] = CurrentUser.location
+        settingsDictionary["Price"] = CurrentUser.price
+        settingsDictionary["Bedrooms"] = CurrentUser.bedrooms
+        settingsDictionary["Square ft."] = CurrentUser.squareFt
         tableView.reloadData()
-        searchTableView.reloadData()
+    }
+    
+    
+    func saveSettings(){
+        CurrentUser.location = settingsDictionary["Location"] as! CLLocationCoordinate2D
+        CurrentUser.price = settingsDictionary["Price"] as! String
+        CurrentUser.bedrooms = settingsDictionary["Bedrooms"] as! String
+        CurrentUser.squareFt = settingsDictionary["Square ft."] as! String
+        CurrentUser.saveToDatabase()
     }
 }
 
 extension SettingViewController: UITableViewDataSource {
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == self.tableView {
-            return info.count
-        } else if searchTableView == tableView {
-            return settings.count
-        } else {
-            return 0
-        }
+        return features.count
     }
+    
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if tableView == self.tableView {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SettingTableViewCell
-            let selectedInfo = info[indexPath.row]
-            if editingStat {
-                cell.textField.isUserInteractionEnabled = true
-            } else {
-                cell.textField.isUserInteractionEnabled = false
-            }
-            cell.titleLabel.text = selectedInfo.title
-            cell.textField.text = selectedInfo.info
-            return cell
-        } else {
-            let cell = searchTableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath) as! SearchTableViewCell
-            let selectedSetting = settings[indexPath.row]
-            if editingStat {
-                cell.isUserInteractionEnabled = true
-            } else {
-                cell.isUserInteractionEnabled = false
-            }
-            cell.criteriaLabel.text = selectedSetting.criteria
-            cell.valueLabel.text = selectedSetting.value as? String
-            return cell
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: "settingsCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "settingsCell")
+        cell.textLabel?.text = "\(features[indexPath.row]):"
+        if indexPath.row != 0 {
+            cell.detailTextLabel?.text = settingsDictionary[features[indexPath.row]] as? String
         }
+        else {
+            guard let coordinate = settingsDictionary[features[indexPath.row]] as? CLLocationCoordinate2D
+                else{return cell}
+            cell.detailTextLabel?.text = String(coordinate.latitude)
+        }
+        if isEditing {
+            cell.detailTextLabel?.textColor = UIColor.blue
+        }
+        else {
+            cell.detailTextLabel?.textColor = UIColor.lightGray
+        }
+        return cell
     }
 }
 
+
+
 extension SettingViewController: UITableViewDelegate {
+    
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == searchTableView {
-            let selectedSetting = settings[indexPath.row]
-            if selectedSetting.criteria == "Latituide" || selectedSetting.criteria == "Longitude" {
+        if isEditing {
+            if indexPath.row == 0 {
                 let vc = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
                 vc.delegate = self
                 navigationController?.pushViewController(vc, animated: true)
-            } else if selectedSetting.criteria == "Number Of Rooms" {
-                let alert = UIAlertController(title: "Number Of Rooms", message: "", preferredStyle: .alert)
-                alert.addTextField(configurationHandler: { (textField) in
-                    textField.placeholder = "Number Of Rooms"
-                })
-                let ok = UIAlertAction(title: "OK", style: .default, handler: { (btn) in
-                    guard let int = Double((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
-                    selectedSetting.value = String(int)
-                    let cell = self.searchTableView.visibleCells[indexPath.row] as! SearchTableViewCell
-                    cell.valueLabel.text = String(int)
-                    self.searchTableView.reloadData()
-                })
-                let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-                alert.addAction(ok)
-                alert.addAction(cancel)
-                present(alert, animated: true, completion: nil)
-            } else if selectedSetting.criteria == "Size" {
-                let alert = UIAlertController(title: "Size", message: "", preferredStyle: .alert)
-                alert.addTextField(configurationHandler: { (textField) in
-                    textField.placeholder = "Square Feet"
-                })
-                let ok = UIAlertAction(title: "OK", style: .default, handler: { (btn) in
-                    guard let int = Double((alert.textFields?.first?.text)!) else {alert.textFields?.first?.text = ""; return}
-                    selectedSetting.value = String(int)
-                    let cell = self.searchTableView.visibleCells[indexPath.row] as! SearchTableViewCell
-                    cell.valueLabel.text = String(int)
-                    self.searchTableView.reloadData()
-                })
-                let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
-                alert.addAction(ok)
-                alert.addAction(cancel)
-                present(alert, animated: true, completion: nil)
+            }
+            else if indexPath.row < features.count{
+                editCritera(indexPath.row)
             }
         }
     }
+    
+    
+    func editCritera(_ place: Int ) {
+        let key = features[place]
+        let value = settingsDictionary[key]
+        let alertController = UIAlertController(title: key, message: "", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "cancel", style: .cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Save", style: .default, handler: {
+            alert -> Void in
+            let inputTextField = alertController.textFields![0] as UITextField
+            if inputTextField.text != "" {
+                guard let newValue =  inputTextField.text
+                    else{ return }
+                self.settingsDictionary[key] = newValue
+                self.tableView.reloadData()
+            }
+        }))
+        alertController.addTextField(configurationHandler: { (textField) -> Void in
+            textField.text = value as? String
+            textField.textAlignment = .center
+        })
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
+
+
 extension SettingViewController: MapViewPassCoordDelegate {
+    
     func passCoord(withLogitude: String, withLatitude: String) {
-        for setting in settings {
-            if setting.criteria == "Longitude" {
-                setting.value = withLogitude
-            } else if setting.criteria == "Latitude" {
-                setting.value = withLatitude
-            }
-        }
-        searchTableView.reloadData()
+        guard let logitude = Double(withLogitude),
+            let latitude = Double(withLogitude)
+            else{return}
+        settingsDictionary["Location"] = CLLocationCoordinate2D(latitude: latitude, longitude: logitude)
+        tableView.reloadData()
     }
 }

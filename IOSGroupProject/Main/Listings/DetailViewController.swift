@@ -9,13 +9,14 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import MapKit
 import FirebaseStorage
 
 class DetailViewController: UIViewController {
     
     
     var tap : UITapGestureRecognizer!
-    var dictionary : [String : String] = ["Location" : "Location", "Price" : "Price", "Bedrooms" : "Bedrooms", "Square ft." : "Square ft.", "Email" : "email@email.com"]
+    var dictionary : [String : Any] = ["Location" : CLLocationCoordinate2D(), "Price" : "Price", "Bedrooms" : "Bedrooms", "Square ft." : "Square ft.", "Email" : "email@email.com"]
     var features : [String] = ["Location", "Price", "Bedrooms", "Square ft.", "Email"]
     var selectedListing : Listing = Listing()
     var navTitle : UILabel = UILabel()
@@ -23,6 +24,15 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tableView: UITableView!
     let pageControl : UIPageControl = UIPageControl()
+    
+    
+    func grabCurrentSettings() {
+        dictionary["Location"] = "\(selectedListing.location)"
+        dictionary["Price"] = selectedListing.price
+        dictionary["Bedrooms"] = selectedListing.bedrooms
+        dictionary["Square ft."] = selectedListing.squareFt
+        tableView.reloadData()
+    }
     
     
     func createPageControll(){
@@ -109,13 +119,27 @@ class DetailViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
             return false
         }
-        for feature in features {
-            if dictionary[feature] == feature || dictionary[feature] == "" {
-                let alert = UIAlertController(title: "Error", message: "You must specify \(feature)", preferredStyle: .alert)
-                let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
-                alert.addAction(ok)
-                self.present(alert, animated: true, completion: nil)
-                return false
+        for i in 0..<features.count {
+            if i != 0 {
+                if dictionary[features[i]] as! String == features[i] || dictionary[features[i]] as! String == "" {
+                    let alert = UIAlertController(title: "Error", message: "You must specify \(features[i])", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                    return false
+                }
+            }
+            else {
+                guard let coordinate = dictionary[features[i]] as? CLLocationCoordinate2D
+                    else{return false}
+                let placeHolderCoordinate = CLLocationCoordinate2DMake(0.0, 0.0)
+                if coordinate.longitude == placeHolderCoordinate.longitude && coordinate.longitude == placeHolderCoordinate.longitude{
+                    let alert = UIAlertController(title: "Error", message: "You must specify Location)", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+
+                }
             }
         }
         return true
@@ -127,12 +151,11 @@ class DetailViewController: UIViewController {
         selectedListing.listingId = ref.child("listings").childByAutoId().key
         guard let currentUser = Auth.auth().currentUser?.uid
             else{return}
-        self.selectedListing.price = self.dictionary["Price"]!
+        self.selectedListing.price = self.dictionary["Price"] as! String
         self.selectedListing.owner = currentUser
-        self.selectedListing.latitude = self.dictionary["Location"]!
-        self.selectedListing.longitude = self.dictionary["Location"]!
-        self.selectedListing.bedrooms = self.dictionary["Bedrooms"]!
-        self.selectedListing.squareFt = self.dictionary["Square ft."]!
+        self.selectedListing.location = self.dictionary["Location"] as! CLLocationCoordinate2D
+        self.selectedListing.bedrooms = self.dictionary["Bedrooms"] as! String
+        self.selectedListing.squareFt = self.dictionary["Square ft."] as! String
         uploadVideo {
             self.selectedListing.saveToDatabase()
         }
@@ -203,8 +226,10 @@ class DetailViewController: UIViewController {
         case .owned:
             createRightButton()
         case .other:
+            grabCurrentSettings()
             createSaveButton()
         case .saved:
+            grabCurrentSettings()
             createSaveButton()
         }
     }
@@ -257,15 +282,22 @@ extension DetailViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < features.count-1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-            cell.textLabel?.text = dictionary[features[indexPath.row]]
-            if true {
-                cell.imageView?.image = UIImage(named: "true")
-            } else {
-                cell.imageView?.image = UIImage(named: "false")
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
+            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+            cell.textLabel?.text = "\(features[indexPath.row]):"
+            if indexPath.row != 0 {
+                cell.detailTextLabel?.text = dictionary[features[indexPath.row]] as? String
             }
-            if self.isEditing {
-                cell.textLabel?.textColor = UIColor.blue
+            else {
+                guard let coordinate = dictionary[features[indexPath.row]] as? CLLocationCoordinate2D
+                    else{return cell}
+                cell.detailTextLabel?.text = String(coordinate.latitude)
+            }
+            if isEditing {
+                cell.detailTextLabel?.textColor = UIColor.blue
+            }
+            else {
+                cell.detailTextLabel?.textColor = UIColor.lightGray
             }
             return cell
         }
@@ -290,7 +322,12 @@ extension DetailViewController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditing {
-            if indexPath.row < features.count-1{
+            if indexPath.row == 0 {
+                let vc = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
+                vc.delegate = self
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            else if indexPath.row < features.count{
                 editCritera(indexPath.row)
             }
         }
@@ -312,7 +349,7 @@ extension DetailViewController : UITableViewDelegate {
             }
         }))
         alertController.addTextField(configurationHandler: { (textField) -> Void in
-            textField.text = value
+            textField.text = value as? String
             textField.textAlignment = .center
         })
         self.present(alertController, animated: true, completion: nil)
@@ -333,5 +370,17 @@ extension DetailViewController : UIImagePickerControllerDelegate, UINavigationCo
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+
+extension DetailViewController: MapViewPassCoordDelegate {
+    
+    func passCoord(withLogitude: String, withLatitude: String) {
+        guard let logitude = Double(withLogitude),
+            let latitude = Double(withLogitude)
+            else{return}
+        dictionary["Location"] = CLLocationCoordinate2D(latitude: latitude, longitude: logitude)
+        tableView.reloadData()
     }
 }

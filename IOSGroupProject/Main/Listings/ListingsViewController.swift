@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import MapKit
 
 class ListingsViewController: UIViewController {
     
@@ -17,32 +18,20 @@ class ListingsViewController: UIViewController {
     let ref = Database.database().reference()
     var listings : [Listing] = []
     let pickerView : UIPickerView = UIPickerView()
-    let options : [String] = ["Find Properties", "Saved Properties", "Your Properties"]
+    let searchOptions : [String] = ["Find Properties", "Saved Properties", "Your Properties"]
     let effectView : UIVisualEffectView = UIVisualEffectView()
     var navTitle : UILabel = UILabel()
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        CurrentUser.getSettings {
+            self.tableView.reloadData()
+        }
         tableView.dataSource = self
+        tableView.delegate = self
         observeListings()
         createPickerNav()
-        getSettings()
-    }
-    
-    func getSettings() {
-        ref.child("users").child((Auth.auth().currentUser?.uid)!).child("settings").observeSingleEvent(of: .value, with: { (data) in
-            guard let validData = data.value as? [String:Any],
-                let location = validData["location"] as? [String:Any],
-                let longitude = location["longitude"] as? String,
-                let latitude = location["latitude"] as? String,
-                let numOfRooms = validData["numOfRooms"] as? String,
-                let size = validData["size"] as? String else {return}
-            CurrentUser.longitude = longitude
-            CurrentUser.latitude = latitude
-            CurrentUser.numOfRooms = numOfRooms
-            CurrentUser.size = size
-        })
     }
     
     func observeListings() {
@@ -56,11 +45,11 @@ class ListingsViewController: UIViewController {
                 let price     = selectedListing["price"] as? String,
                 let squareFt  = selectedListing["squareFt"] as? String,
                 let bedrooms  = selectedListing["bedrooms"] as? String,
-                let latitude  = location["latitude"] as? String,
-                let longitude = location["longitude"] as? String
+                let latitude  = location["latitude"] as? Double,
+                let longitude = location["longitude"] as? Double
             else {return}
-            
-            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, latitude: latitude, longitude: longitude, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+            let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
             
             for imageUrl in newListing.imageURLS {
                 group.enter()
@@ -92,23 +81,36 @@ extension ListingsViewController: UITableViewDataSource {
     }
     
     
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ListingTableViewCell
         let selectedListing = listings[indexPath.row]
         cell.listing = selectedListing
         cell.videoView.image = selectedListing.images[0]
+        cell.locationImageView.image = UIImage(named: "true")
+        cell.priceImageView.image = UIImage(named: "true")
+        cell.bedroomsImageView.image = UIImage(named: "true")
+        cell.squareFtImageView.image = UIImage(named: "true")
         cell.delegate = self
         return cell
     }
 }
 
 
-extension ListingsViewController: ShowDetailDelegate {
+extension ListingsViewController : UITableViewDelegate {
+    
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return view.frame.height
+    }
+}
+
+extension ListingsViewController : ShowDetailDelegate {
     
     
     func showDetail(withListing: Listing) {
         guard let vc = storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as? DetailViewController else {return}
-//        vc.listing = withListing
+        vc.selectedListing = withListing
         navigationController?.pushViewController(vc, animated: true)
     }
 }

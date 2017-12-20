@@ -104,7 +104,7 @@ extension ListingsViewController : UIPickerViewDataSource {
     
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return options.count
+        return searchOptions.count
     }
     
     
@@ -114,7 +114,7 @@ extension ListingsViewController : UIPickerViewDataSource {
     
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-        return createOptionsLabel(options[row])
+        return createOptionsLabel(searchOptions[row])
     }
 }
 
@@ -124,7 +124,7 @@ extension ListingsViewController : UIPickerViewDelegate {
     
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        createNavTitle(options[row])
+        createNavTitle(searchOptions[row])
         pickerView.isUserInteractionEnabled = false
         blurView()
     }

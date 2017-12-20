@@ -11,6 +11,7 @@ import UIKit
 import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
+import MapKit
 
 class Listing {
     
@@ -20,23 +21,22 @@ class Listing {
     var imageURLS: [String] = []
     var images: [UIImage] = []
     var price: String = ""
-    var latitude: String = ""
-    var longitude: String = ""
     var squareFt: String = ""
     var bedrooms: String = ""
     var owner: String = ""
     var status : Status = .other
+    var location : CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+
     
     init (){
     }
     
-    init(listingId: String, videoURL: String, imageURLS: [String], price: String, latitude: String, longitude: String, squareFt: String, bedrooms: String, owner: String){
+    init(listingId: String, videoURL: String, imageURLS: [String], price: String, location: CLLocationCoordinate2D, squareFt: String, bedrooms: String, owner: String){
         self.listingId = listingId
         self.videoURL = videoURL
         self.imageURLS = imageURLS
         self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
+        self.location = location
         self.squareFt = squareFt
         self.bedrooms = bedrooms
         self.owner = owner
@@ -58,7 +58,7 @@ class Listing {
         for i in 0..<self.imageURLS.count {
             listingRef.child("images").updateChildValues(["\(i)" : self.imageURLS[i]])
         }
-        listingRef.child("location").updateChildValues(["latitude" : self.latitude, "longitude" : self.longitude])
+        listingRef.child("location").updateChildValues(["latitude" : self.location.latitude, "longitude" : self.location.latitude])
         guard let loggedInUser = Auth.auth().currentUser?.uid
             else{return}
         ref.child("users").child(loggedInUser).child("listings").updateChildValues([self.listingId : true])
