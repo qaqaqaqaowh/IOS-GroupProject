@@ -21,10 +21,14 @@ class ListingsViewController: UIViewController {
     let searchOptions : [String] = ["Find Properties", "Saved Properties", "Your Properties"]
     let effectView : UIVisualEffectView = UIVisualEffectView()
     var navTitle : UILabel = UILabel()
+    let overlay = Bundle.main.loadNibNamed("OverlayView", owner: self, options: nil)?.first as! OverlayView
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(overlay)
+        overlay.frame = view.bounds
+        overlay.loadView.startAnimating()
         CurrentUser.getSettings {
             self.tableView.reloadData()
         }
@@ -76,6 +80,7 @@ class ListingsViewController: UIViewController {
                 sortGroup.leave()
                 let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                self.overlay.removeFromSuperview()
             })
         })
         sortGroup.notify(queue: .main) {
