@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		840F74573A2D43EF8E4C7F3F /* Pods_IOSGroupProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2093FBF3E23B48E47232124 /* Pods_IOSGroupProject.framework */; };
+		A12BCDC11FEA40D300FEA34C /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12BCDC01FEA40D300FEA34C /* OverlayView.swift */; };
+		A12BCDC31FEA40F600FEA34C /* OverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A12BCDC21FEA40F600FEA34C /* OverlayView.xib */; };
 		A18E29B11FE91108008FABA0 /* CurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E29B01FE91108008FABA0 /* CurrentUser.swift */; };
 		A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C43BD81FDF8B6C00CC8652 /* AppDelegate.swift */; };
 		A1C43BDE1FDF8B6C00CC8652 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1C43BDC1FDF8B6C00CC8652 /* Main.storyboard */; };
@@ -34,6 +36,8 @@
 /* Begin PBXFileReference section */
 		2D3F520D8C6D8075B7FE1DEB /* Pods-IOSGroupProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSGroupProject.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IOSGroupProject/Pods-IOSGroupProject.debug.xcconfig"; sourceTree = "<group>"; };
 		766B1E234EB2A8FDF186A096 /* Pods-IOSGroupProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSGroupProject.release.xcconfig"; path = "Pods/Target Support Files/Pods-IOSGroupProject/Pods-IOSGroupProject.release.xcconfig"; sourceTree = "<group>"; };
+		A12BCDC01FEA40D300FEA34C /* OverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
+		A12BCDC21FEA40F600FEA34C /* OverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OverlayView.xib; sourceTree = "<group>"; };
 		A18E29B01FE91108008FABA0 /* CurrentUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUser.swift; sourceTree = "<group>"; };
 		A1C43BD51FDF8B6C00CC8652 /* IOSGroupProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOSGroupProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C43BD81FDF8B6C00CC8652 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -114,6 +118,8 @@
 				A1C43BE71FDF8B6C00CC8652 /* Info.plist */,
 				A1C43BDF1FDF8B6C00CC8652 /* IOSGroupProject.xcdatamodeld */,
 				EB58561F1FE3723A007215D1 /* EBGaramond */,
+				A12BCDC01FEA40D300FEA34C /* OverlayView.swift */,
+				A12BCDC21FEA40F600FEA34C /* OverlayView.xib */,
 			);
 			path = IOSGroupProject;
 			sourceTree = "<group>";
@@ -249,6 +255,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A12BCDC31FEA40F600FEA34C /* OverlayView.xib in Resources */,
 				EB5856201FE3727E007215D1 /* EBGaramond-Regular.ttf in Resources */,
 				A1C43BE61FDF8B6C00CC8652 /* LaunchScreen.storyboard in Resources */,
 				EB884DAB1FDF9CA20047D618 /* GoogleService-Info.plist in Resources */,
@@ -334,6 +341,7 @@
 				EB5856271FE38E14007215D1 /* pickerNav.swift in Sources */,
 				EB884DA11FDF9AA20047D618 /* Notification.swift in Sources */,
 				A1C43BF41FDFB5B700CC8652 /* ListingCell.swift in Sources */,
+				A12BCDC11FEA40D300FEA34C /* OverlayView.swift in Sources */,
 				A1C43BD91FDF8B6C00CC8652 /* AppDelegate.swift in Sources */,
 				A1DFCC571FE3EE8D00FCECFD /* MapViewController.swift in Sources */,
 				A1C43BF01FDF968700CC8652 /* Listing.swift in Sources */,

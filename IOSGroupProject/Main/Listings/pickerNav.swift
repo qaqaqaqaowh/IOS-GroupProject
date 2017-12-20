@@ -125,6 +125,8 @@ extension ListingsViewController : UIPickerViewDelegate {
     
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        view.addSubview(overlay)
+        overlay.frame = view.bounds
         createNavTitle(searchOptions[row])
         pickerView.isUserInteractionEnabled = false
         blurView()
@@ -171,6 +173,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                         sortGroup.leave()
                         let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                         self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                        self.overlay.removeFromSuperview()
                     })
                 }
             })
@@ -223,6 +226,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                                 sortGroup.leave()
                                 let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                                self.overlay.removeFromSuperview()
                             })
                         })
                     }
@@ -277,6 +281,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                                 sortGroup.leave()
                                 let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                                self.overlay.removeFromSuperview()
                             })
                         })
                     }
