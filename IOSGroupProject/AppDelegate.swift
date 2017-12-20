@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import CoreData
+import IQKeyboardManager
 
 
 @UIApplicationMain
@@ -19,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
+        IQKeyboardManager.shared().isEnabled = true
         addNotificationObservers()
         UINavigationBar.appearance().barStyle = .blackOpaque
 
