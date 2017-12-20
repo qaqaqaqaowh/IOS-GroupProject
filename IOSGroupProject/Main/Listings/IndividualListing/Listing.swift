@@ -56,10 +56,7 @@ class Listing {
         let ref = Database.database().reference()
         let listingRef = ref.child("listings").child(self.listingId)
         var dict:[String:Any] = ["videoURL" : self.videoURL, "price" : self.price, "squareFt" : self.squareFt, "bedrooms" : self.bedrooms, "owner" : self.owner]
-        
-        for i in 0..<self.imageURLS.count {
-            dict["images"] = ["\(i)":self.imageURLS[i]]
-        }
+        dict["images"] = self.imageURLS
         dict["location"] = ["latitude": self.location.latitude, "longitude":self.location.longitude]
         guard let loggedInUser = Auth.auth().currentUser?.uid
             else{return}

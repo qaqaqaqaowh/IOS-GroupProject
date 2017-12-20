@@ -131,7 +131,7 @@ extension ListingsViewController : UIPickerViewDelegate {
         listings = []
         let sortGroup = DispatchGroup()
         if row == 0 {
-            ref.child("listings").observeSingleEvent(of: .childAdded, with: { (snapshot) in
+            ref.child("listings").observe(.childAdded, with: { (snapshot) in
                 let group = DispatchGroup()
                 guard let selectedListing = snapshot.value as? [String:Any],
                     let location  = selectedListing["location"] as? [String:Any],
@@ -144,9 +144,9 @@ extension ListingsViewController : UIPickerViewDelegate {
                     let latitude  = location["latitude"] as? Double,
                     let longitude = location["longitude"] as? Double
                     else {return}
-                sortGroup.enter()
                 let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                 let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                sortGroup.enter()
                 
                 for imageUrl in newListing.imageURLS {
                     group.enter()
@@ -285,7 +285,7 @@ extension ListingsViewController : UIPickerViewDelegate {
     
     func sortListings(_ listings:[Listing]) {
         let group = DispatchGroup()
-        for _ in 1...listings.count {
+        for _ in 0..<listings.count {
             group.enter()
         }
         for listing in listings {
@@ -304,7 +304,7 @@ extension ListingsViewController : UIPickerViewDelegate {
             group.leave()
         }
         group.notify(queue: .main) {
-            let sort = NSSortDescriptor(key: "score", ascending: true)
+            let sort = NSSortDescriptor(key: "score", ascending: false)
             let sortedListing = (listings as NSArray).sortedArray(using: [sort]) as! [Listing]
             self.listings = sortedListing
             self.tableView.reloadData()

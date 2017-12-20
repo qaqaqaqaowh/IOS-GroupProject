@@ -49,9 +49,9 @@ class ListingsViewController: UIViewController {
                 let latitude  = location["latitude"] as? Double,
                 let longitude = location["longitude"] as? Double
             else {return}
-            sortGroup.enter()
             let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+            sortGroup.enter()
             
             for imageUrl in newListing.imageURLS {
                 group.enter()

@@ -26,15 +26,6 @@ class DetailViewController: UIViewController {
     let pageControl : UIPageControl = UIPageControl()
     
     
-    func grabCurrentSettings() {
-        dictionary["Location"] = selectedListing.location
-        dictionary["Price"] = selectedListing.price
-        dictionary["Bedrooms"] = selectedListing.bedrooms
-        dictionary["Square ft."] = selectedListing.squareFt
-        tableView.reloadData()
-    }
-    
-    
     func createPageControll(){
         if selectedListing.images.count > 1 {
             pageControl.removeFromSuperview()
@@ -82,9 +73,9 @@ class DetailViewController: UIViewController {
         let button = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.rightBarButtonItem = button
         if selectedListing.status == .saved {
-            navigationItem.rightBarButtonItem?.title = "Save"
+            navigationItem.rightBarButtonItem?.title = "Unsave"
         }
-        else{
+        else {
             navigationItem.rightBarButtonItem?.title = "Save"
         }
     }
@@ -94,7 +85,7 @@ class DetailViewController: UIViewController {
             navigationItem.rightBarButtonItem?.title = "Save"
             selectedListing.status = .other
         }
-        else{
+        else {
             saveListing()
             navigationItem.rightBarButtonItem?.title = "Unsave"
             selectedListing.status = .saved
@@ -109,6 +100,56 @@ class DetailViewController: UIViewController {
     func saveListing(){
         let savedRef = Database.database().reference().child("users").child(CurrentUser.uid).child("saved")
         savedRef.updateChildValues([selectedListing.listingId : true])
+    }
+    
+    
+    func fetchSavedStatus(){
+        let ref = Database.database().reference()
+        ref.child("users").child(CurrentUser.uid).child("saved").observe(.childAdded, with: { (snapshot) in
+            if snapshot.key == self.selectedListing.listingId {
+                self.selectedListing.status = .saved
+            }
+            DispatchQueue.main.async {
+                self.createSaveButton()
+            }
+        })
+    }
+    
+    
+    func fetchCurrentSettings() {
+        dictionary["Location"] = selectedListing.location
+        dictionary["Price"] = selectedListing.price
+        dictionary["Bedrooms"] = selectedListing.bedrooms
+        dictionary["Square ft."] = selectedListing.squareFt
+        fetchOwner { (uid) in
+            self.fetchEmail(uid, completion: { (email) in
+                DispatchQueue.main.async {
+                    self.dictionary["Location"] = self.selectedListing.location
+                    self.dictionary["Price"] = self.selectedListing.price
+                    self.dictionary["Bedrooms"] = self.selectedListing.bedrooms
+                    self.dictionary["Square ft."] = self.selectedListing.squareFt
+                    self.dictionary["Email"] = email
+                    self.tableView.reloadData()
+                }
+            })
+        }
+    }
+    
+    
+    func fetchOwner(completion: @escaping (_ uid: String) -> Void) {
+        let ref = Database.database().reference()
+        ref.child("listings").child(selectedListing.listingId).child("owner").observeSingleEvent(of: .value, with: { (data) in
+            let uid = data.value as! String
+            completion(uid)
+        })
+    }
+    func fetchEmail(_ uid: String, completion: @escaping (_ email: String) -> Void){
+        let ref = Database.database().reference()
+        ref.child("users").child(uid).child("email").observeSingleEvent(of: .value, with: { (data) in
+            guard let email = data.value as? String
+                else{return}
+            completion(email)
+        })
     }
     
     
@@ -252,15 +293,15 @@ class DetailViewController: UIViewController {
         case .owned:
             createRightButton()
         case .other:
-            grabCurrentSettings()
-            createSaveButton()
+            fetchCurrentSettings()
+            fetchSavedStatus()
         case .saved:
-            grabCurrentSettings()
-            createSaveButton()
+            fetchCurrentSettings()
+            fetchSavedStatus()
         }
     }
+
     
-        
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
