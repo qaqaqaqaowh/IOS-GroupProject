@@ -27,7 +27,7 @@ class DetailViewController: UIViewController {
     
     
     func grabCurrentSettings() {
-        dictionary["Location"] = "\(selectedListing.location)"
+        dictionary["Location"] = selectedListing.location
         dictionary["Price"] = selectedListing.price
         dictionary["Bedrooms"] = selectedListing.bedrooms
         dictionary["Square ft."] = selectedListing.squareFt
@@ -81,10 +81,37 @@ class DetailViewController: UIViewController {
     func createSaveButton(){
         let button = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveButtonTapped))
         navigationItem.rightBarButtonItem = button
+        if selectedListing.status == .saved {
+            navigationItem.rightBarButtonItem?.title = "Save"
+        }
+        else{
+            navigationItem.rightBarButtonItem?.title = "Save"
+        }
     }
     @objc func saveButtonTapped(){
-
+        if selectedListing.status == .saved {
+            unSaveListing()
+            navigationItem.rightBarButtonItem?.title = "Save"
+            selectedListing.status = .other
+        }
+        else{
+            saveListing()
+            navigationItem.rightBarButtonItem?.title = "Unsave"
+            selectedListing.status = .saved
+        }
     }
+    
+    func unSaveListing(){
+        let savedRef = Database.database().reference().child("users").child(CurrentUser.uid).child("saved")
+        savedRef.child(selectedListing.listingId).removeValue()
+    }
+    
+    func saveListing(){
+        let savedRef = Database.database().reference().child("users").child(CurrentUser.uid).child("saved")
+        savedRef.updateChildValues([selectedListing.listingId : true])
+    }
+    
+    
     
     
     func createRightButton(){
@@ -138,7 +165,6 @@ class DetailViewController: UIViewController {
                     let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alert.addAction(ok)
                     self.present(alert, animated: true, completion: nil)
-
                 }
             }
         }
@@ -263,6 +289,7 @@ class DetailViewController: UIViewController {
 
 
 extension DetailViewController : UIScrollViewDelegate {
+    
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView){
         let pageWidth:CGFloat = scrollView.frame.width

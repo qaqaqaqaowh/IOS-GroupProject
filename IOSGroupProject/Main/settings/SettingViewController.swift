@@ -28,6 +28,21 @@ class SettingViewController: UIViewController {
     }
     
     
+    func createLogOutButton() {
+        let logOutButton = UIBarButtonItem(title: "Log Out", style: .done, target: self, action: #selector(logOutButtonTapped))
+        navigationItem.leftBarButtonItem = logOutButton
+    }
+    @objc func logOutButtonTapped() {
+        do {
+            try Auth.auth().signOut()
+            NotificationCenter.appLogout()
+        }
+        catch {
+            
+        }
+    }
+    
+    
     func createEditButton(){
         let button = UIBarButtonItem(title: "Edit", style: .done, target: self, action: #selector(editButtonTapped))
         navigationItem.rightBarButtonItem = button
@@ -50,6 +65,7 @@ class SettingViewController: UIViewController {
         super.viewDidLoad()
         createNavTitle("Search Settings")
         createEditButton()
+        createLogOutButton()
         CurrentUser.getSettings {
             DispatchQueue.main.async {
                 self.grabCurrentSettings()
