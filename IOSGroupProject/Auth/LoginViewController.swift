@@ -16,13 +16,16 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var signUpButton: UIButton!
+    let overlay = Bundle.main.loadNibNamed("OverlayView", owner: self, options: nil)?.first as! OverlayView
     
     
     @IBAction func loginButtonTapped(_ sender: Any) {
         guard let email = emailTextField.text,
             let password = passwordTextField.text
             else {return}
-        
+        view.addSubview(overlay)
+        overlay.frame = view.bounds
+        overlay.loadView.startAnimating()
         Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
             
             if let validError = error {

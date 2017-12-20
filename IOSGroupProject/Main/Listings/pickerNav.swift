@@ -153,7 +153,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                         else {return}
                     sortGroup.enter()
                     let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                    let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                    let newListing = Listing(listingId: validListing.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
                     
                     for imageUrl in newListing.imageURLS {
                         group.enter()
@@ -181,7 +181,7 @@ extension ListingsViewController : UIPickerViewDelegate {
             var listingsUID: [String] = []
             let fetchListingGroup = DispatchGroup()
             ref.child("users").child(CurrentUser.uid).child("saved").observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dictionary = snapshot.value as? [String:Any] else {return}
+                guard let dictionary = snapshot.value as? [String:Any] else {self.overlay.removeFromSuperview(); return}
                 for (_, _) in dictionary.enumerated() {
                     fetchListingGroup.enter()
                 }
@@ -206,7 +206,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                                 else {return}
                             sortGroup.enter()
                             let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                            let newListing = Listing(listingId: uid, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
                             
                             for imageUrl in newListing.imageURLS {
                                 group.enter()
@@ -236,7 +236,7 @@ extension ListingsViewController : UIPickerViewDelegate {
             var listingsUID: [String] = []
             let fetchListingGroup = DispatchGroup()
             ref.child("users").child(CurrentUser.uid).child("listings").observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dictionary = snapshot.value as? [String:Any] else {return}
+                guard let dictionary = snapshot.value as? [String:Any] else {self.overlay.removeFromSuperview(); return}
                 for (_, _) in dictionary.enumerated() {
                     fetchListingGroup.enter()
                 }
@@ -261,7 +261,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                                 else {return}
                             sortGroup.enter()
                             let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                            let newListing = Listing(listingId: uid, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
                             
                             for imageUrl in newListing.imageURLS {
                                 group.enter()

@@ -30,6 +30,7 @@ class CurrentUser {
     
     
     static func getSettings(completion: @escaping () -> Void) {
+        CurrentUser.uid = Auth.auth().currentUser!.uid
         let ref = Database.database().reference()
         let settingsRef = ref.child("users").child(CurrentUser.uid).child("settings")
         settingsRef.observeSingleEvent(of: .value, with: { (data) in

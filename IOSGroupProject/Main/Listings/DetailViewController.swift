@@ -150,6 +150,7 @@ class DetailViewController: UIViewController {
             completion(uid)
         })
     }
+    
     func fetchEmail(_ uid: String, completion: @escaping (_ email: String) -> Void){
         let ref = Database.database().reference()
         ref.child("users").child(uid).child("email").observeSingleEvent(of: .value, with: { (data) in
