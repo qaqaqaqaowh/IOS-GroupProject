@@ -303,6 +303,9 @@ extension DetailViewController : UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if selectedListing.status == .new {
+            return features.count-1
+        }
         return features.count
     }
     

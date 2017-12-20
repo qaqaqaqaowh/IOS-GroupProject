@@ -143,29 +143,27 @@ extension ListingsViewController : UIPickerViewDelegate {
                     let latitude  = location["latitude"] as? Double,
                     let longitude = location["longitude"] as? Double
                     else {return}
-                if self.isDistanceInRange(long1: String(longitude), lat1: String(latitude), long2: String(CurrentUser.location.longitude), lat2: String(CurrentUser.location.latitude), range: "10000") {
-                    let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                    let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
-                    
-                    for imageUrl in newListing.imageURLS {
-                        group.enter()
-                        guard let url = URL(string: imageUrl)
-                            else{return}
-                        let manager = URLSession.shared
-                        let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
-                            if let validData = data, let image = UIImage(data: validData) {
-                                newListing.images.append(image)
-                                group.leave()
-                            }
-                        })
-                        dataTask.resume()
-                    }
-                    group.notify(queue: .main, execute: {
-                        self.listings.append(newListing)
-                        let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
-                        self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                
+                for imageUrl in newListing.imageURLS {
+                    group.enter()
+                    guard let url = URL(string: imageUrl)
+                        else{return}
+                    let manager = URLSession.shared
+                    let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
+                        if let validData = data, let image = UIImage(data: validData) {
+                            newListing.images.append(image)
+                            group.leave()
+                        }
                     })
+                    dataTask.resume()
                 }
+                group.notify(queue: .main, execute: {
+                    self.listings.append(newListing)
+                    let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                    self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                })
             })
         } else if row == 1 {
             var listingsUID: [String] = []

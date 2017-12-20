@@ -54,13 +54,15 @@ class Listing {
     func saveToDatabase(){
         let ref = Database.database().reference()
         let listingRef = ref.child("listings").child(self.listingId)
-        listingRef.updateChildValues(["videoURL" : self.videoURL, "price" : self.price, "squareFt" : self.squareFt, "bedrooms" : self.bedrooms, "owner" : self.owner])
+        var dict:[String:Any] = ["videoURL" : self.videoURL, "price" : self.price, "squareFt" : self.squareFt, "bedrooms" : self.bedrooms, "owner" : self.owner]
+        
         for i in 0..<self.imageURLS.count {
-            listingRef.child("images").updateChildValues(["\(i)" : self.imageURLS[i]])
+            dict["images"] = ["\(i)":self.imageURLS[i]]
         }
-        listingRef.child("location").updateChildValues(["latitude" : self.location.latitude, "longitude" : self.location.latitude])
+        dict["location"] = ["latitude": self.location.latitude, "longitude":self.location.longitude]
         guard let loggedInUser = Auth.auth().currentUser?.uid
             else{return}
+        listingRef.setValue(dict)
         ref.child("users").child(loggedInUser).child("listings").updateChildValues([self.listingId : true])
     }
 }
