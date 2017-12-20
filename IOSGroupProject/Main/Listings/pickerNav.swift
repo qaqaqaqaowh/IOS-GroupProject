@@ -12,6 +12,7 @@
 //
 
 import UIKit
+import MapKit
 
 extension ListingsViewController {
     
@@ -127,6 +128,151 @@ extension ListingsViewController : UIPickerViewDelegate {
         createNavTitle(searchOptions[row])
         pickerView.isUserInteractionEnabled = false
         blurView()
+        listings = []
+        if row == 0 {
+            ref.child("listings").observeSingleEvent(of: .childAdded, with: { (snapshot) in
+                let group = DispatchGroup()
+                guard let selectedListing = snapshot.value as? [String:Any],
+                    let location  = selectedListing["location"] as? [String:Any],
+                    let images    = selectedListing["images"] as? [String],
+                    let owner     = selectedListing["owner"] as? String,
+                    let videoUrl  = selectedListing["videoURL"] as? String,
+                    let price     = selectedListing["price"] as? String,
+                    let squareFt  = selectedListing["squareFt"] as? String,
+                    let bedrooms  = selectedListing["bedrooms"] as? String,
+                    let latitude  = location["latitude"] as? Double,
+                    let longitude = location["longitude"] as? Double
+                    else {return}
+                if self.isDistanceInRange(long1: String(longitude), lat1: String(latitude), long2: String(CurrentUser.location.longitude), lat2: String(CurrentUser.location.latitude), range: "10000") {
+                    let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                    let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                    
+                    for imageUrl in newListing.imageURLS {
+                        group.enter()
+                        guard let url = URL(string: imageUrl)
+                            else{return}
+                        let manager = URLSession.shared
+                        let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
+                            if let validData = data, let image = UIImage(data: validData) {
+                                newListing.images.append(image)
+                                group.leave()
+                            }
+                        })
+                        dataTask.resume()
+                    }
+                    group.notify(queue: .main, execute: {
+                        self.listings.append(newListing)
+                        let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                        self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                    })
+                }
+            })
+        } else if row == 1 {
+            var listingsUID: [String] = []
+            let fetchListingGroup = DispatchGroup()
+            ref.child("users").child(CurrentUser.uid).child("saved").observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? [String:Any] else {return}
+                for (_, _) in dictionary.enumerated() {
+                    fetchListingGroup.enter()
+                }
+                for (key, _) in dictionary {
+                    listingsUID.append(key)
+                    fetchListingGroup.leave()
+                }
+                fetchListingGroup.notify(queue: .main, execute: { 
+                    for uid in listingsUID {
+                        self.ref.child("listings").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                            let group = DispatchGroup()
+                            guard let selectedListing = snapshot.value as? [String:Any],
+                                let location  = selectedListing["location"] as? [String:Any],
+                                let images    = selectedListing["images"] as? [String],
+                                let owner     = selectedListing["owner"] as? String,
+                                let videoUrl  = selectedListing["videoURL"] as? String,
+                                let price     = selectedListing["price"] as? String,
+                                let squareFt  = selectedListing["squareFt"] as? String,
+                                let bedrooms  = selectedListing["bedrooms"] as? String,
+                                let latitude  = location["latitude"] as? Double,
+                                let longitude = location["longitude"] as? Double
+                                else {return}
+                            let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                            
+                            for imageUrl in newListing.imageURLS {
+                                group.enter()
+                                guard let url = URL(string: imageUrl)
+                                    else{return}
+                                let manager = URLSession.shared
+                                let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
+                                    if let validData = data, let image = UIImage(data: validData) {
+                                        newListing.images.append(image)
+                                        group.leave()
+                                    }
+                                })
+                                dataTask.resume()
+                            }
+                            group.notify(queue: .main, execute: {
+                                self.listings.append(newListing)
+                                let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                                self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                            })
+                        })
+                    }
+                })
+            })
+        } else if row == 2 {
+            var listingsUID: [String] = []
+            let fetchListingGroup = DispatchGroup()
+            ref.child("users").child(CurrentUser.uid).child("listings").observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? [String:Any] else {return}
+                for (_, _) in dictionary.enumerated() {
+                    fetchListingGroup.enter()
+                }
+                for (key, _) in dictionary {
+                    listingsUID.append(key)
+                    fetchListingGroup.leave()
+                }
+                fetchListingGroup.notify(queue: .main, execute: {
+                    for uid in listingsUID {
+                        self.ref.child("listings").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                            let group = DispatchGroup()
+                            guard let selectedListing = snapshot.value as? [String:Any],
+                                let location  = selectedListing["location"] as? [String:Any],
+                                let images    = selectedListing["images"] as? [String],
+                                let owner     = selectedListing["owner"] as? String,
+                                let videoUrl  = selectedListing["videoURL"] as? String,
+                                let price     = selectedListing["price"] as? String,
+                                let squareFt  = selectedListing["squareFt"] as? String,
+                                let bedrooms  = selectedListing["bedrooms"] as? String,
+                                let latitude  = location["latitude"] as? Double,
+                                let longitude = location["longitude"] as? Double
+                                else {return}
+                            let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                            let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
+                            
+                            for imageUrl in newListing.imageURLS {
+                                group.enter()
+                                guard let url = URL(string: imageUrl)
+                                    else{return}
+                                let manager = URLSession.shared
+                                let dataTask = manager.dataTask(with: url, completionHandler: { (data, response, error) in
+                                    if let validData = data, let image = UIImage(data: validData) {
+                                        newListing.images.append(image)
+                                        group.leave()
+                                    }
+                                })
+                                dataTask.resume()
+                            }
+                            group.notify(queue: .main, execute: {
+                                self.listings.append(newListing)
+                                let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
+                                self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
+                            })
+                        })
+                    }
+                })
+            })
+        }
+        tableView.reloadData()
     }
 }
 
