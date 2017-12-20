@@ -105,14 +105,21 @@ class DetailViewController: UIViewController {
     
     func fetchSavedStatus(){
         let ref = Database.database().reference()
-        ref.child("users").child(CurrentUser.uid).child("saved").observe(.childAdded, with: { (snapshot) in
-            if snapshot.key == self.selectedListing.listingId {
-                self.selectedListing.status = .saved
-            }
-            DispatchQueue.main.async {
+    
+        ref.child("users").child(CurrentUser.uid).child("saved").observeSingleEvent(of: .value, with: { (snapshot) in
+            if snapshot.childrenCount == 0 {
+                self.selectedListing.status = .other
                 self.createSaveButton()
+            } else {
+                if snapshot.key == self.selectedListing.listingId {
+                    self.selectedListing.status = .saved
+                }
+                DispatchQueue.main.async {
+                    self.createSaveButton()
+                }
             }
         })
+
     }
     
     
@@ -228,6 +235,7 @@ class DetailViewController: UIViewController {
         }
     }
     
+    
     func finish() {
         guard let viewControllers = navigationController?.viewControllers
             else{return}
@@ -293,6 +301,10 @@ class DetailViewController: UIViewController {
         case .owned:
             createRightButton()
         case .other:
+//            if selectedListing.owner == CurrentUser.uid{
+//                selectedListing.status = .owned
+//                dealWithTypes()
+//            }
             fetchCurrentSettings()
             fetchSavedStatus()
         case .saved:
@@ -376,7 +388,7 @@ extension DetailViewController : UITableViewDataSource {
             let cell = UITableViewCell(style: .value1, reuseIdentifier: "emailCell")
             tableView.register(UITableViewCell.self, forCellReuseIdentifier: "emailCell")
             cell.textLabel?.text = "Email:"
-            cell.detailTextLabel?.text = features[features.count-1]
+            cell.detailTextLabel?.text = dictionary[features[indexPath.row]] as? String
             cell.imageView?.image = UIImage(named: "email")
             return cell
         }
