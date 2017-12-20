@@ -13,7 +13,6 @@ import MapKit
 
 extension UIViewController {
     
-    
     func alert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
