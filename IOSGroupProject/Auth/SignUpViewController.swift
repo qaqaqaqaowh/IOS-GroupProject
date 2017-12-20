@@ -48,6 +48,7 @@ class SignUpViewController : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(red: 255/255, green: 70/255, blue: 80/255, alpha: 1)
+        navigationController?.navigationBar.tintColor = UIColor.white
         makeRound(emailTextField)
         makeRound(passwordTextField)
         makeRound(signUpButton)
