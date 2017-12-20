@@ -26,8 +26,7 @@ extension UIViewController {
     
     func requireLogin() {
         if Auth.auth().currentUser == nil {
-            let vc = storyboard?.instantiateViewController(withIdentifier: "LoginViewController")
-            navigationController?.viewControllers = [vc!]
+            NotificationCenter.appLogout()
         }
     }
     
