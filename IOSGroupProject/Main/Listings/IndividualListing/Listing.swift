@@ -26,6 +26,7 @@ class Listing {
     var owner: String = ""
     var status : Status = .other
     var location : CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    var score: Int = 0
 
     
     init (){

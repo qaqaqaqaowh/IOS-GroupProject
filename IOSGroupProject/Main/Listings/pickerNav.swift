@@ -129,6 +129,7 @@ extension ListingsViewController : UIPickerViewDelegate {
         pickerView.isUserInteractionEnabled = false
         blurView()
         listings = []
+        let sortGroup = DispatchGroup()
         if row == 0 {
             ref.child("listings").observeSingleEvent(of: .childAdded, with: { (snapshot) in
                 let group = DispatchGroup()
@@ -143,6 +144,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                     let latitude  = location["latitude"] as? Double,
                     let longitude = location["longitude"] as? Double
                     else {return}
+                sortGroup.enter()
                 let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                 let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
                 
@@ -161,6 +163,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                 }
                 group.notify(queue: .main, execute: {
                     self.listings.append(newListing)
+                    sortGroup.leave()
                     let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                     self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
                 })
@@ -192,6 +195,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                                 let latitude  = location["latitude"] as? Double,
                                 let longitude = location["longitude"] as? Double
                                 else {return}
+                            sortGroup.enter()
                             let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                             let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
                             
@@ -210,6 +214,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                             }
                             group.notify(queue: .main, execute: {
                                 self.listings.append(newListing)
+                                sortGroup.leave()
                                 let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
                             })
@@ -244,6 +249,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                                 let latitude  = location["latitude"] as? Double,
                                 let longitude = location["longitude"] as? Double
                                 else {return}
+                            sortGroup.enter()
                             let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                             let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
                             
@@ -262,6 +268,7 @@ extension ListingsViewController : UIPickerViewDelegate {
                             }
                             group.notify(queue: .main, execute: {
                                 self.listings.append(newListing)
+                                sortGroup.leave()
                                 let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
                             })
@@ -270,7 +277,39 @@ extension ListingsViewController : UIPickerViewDelegate {
                 })
             })
         }
+        sortGroup.notify(queue: .main) { 
+            self.sortListings(self.listings)
+        }
         tableView.reloadData()
     }
+    
+    func sortListings(_ listings:[Listing]) {
+        let group = DispatchGroup()
+        for _ in 1...listings.count {
+            group.enter()
+        }
+        for listing in listings {
+            if listing.bedrooms >= CurrentUser.bedrooms {
+                listing.score += 1
+            }
+            if isDistanceInRange(long1: String(listing.location.longitude), lat1: String(listing.location.latitude), long2: String(CurrentUser.location.longitude), lat2: String(CurrentUser.location.latitude), range: "10000") {
+                listing.score += 1
+            }
+            if listing.price <= CurrentUser.price {
+                listing.score += 1
+            }
+            if listing.squareFt >= CurrentUser.squareFt {
+                listing.score += 1
+            }
+            group.leave()
+        }
+        group.notify(queue: .main) {
+            let sort = NSSortDescriptor(key: "score", ascending: true)
+            let sortedListing = (listings as NSArray).sortedArray(using: [sort]) as! [Listing]
+            self.listings = sortedListing
+            self.tableView.reloadData()
+        }
+    }
+    
 }
 

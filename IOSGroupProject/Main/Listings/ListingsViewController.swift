@@ -35,6 +35,7 @@ class ListingsViewController: UIViewController {
     }
     
     func observeListings() {
+        let sortGroup = DispatchGroup()
         ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
             let group = DispatchGroup()
             guard let selectedListing = snapshot.value as? [String:Any],
@@ -48,6 +49,7 @@ class ListingsViewController: UIViewController {
                 let latitude  = location["latitude"] as? Double,
                 let longitude = location["longitude"] as? Double
             else {return}
+            sortGroup.enter()
             let locationCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             let newListing = Listing(listingId: snapshot.key, videoURL: videoUrl, imageURLS: images, price: price, location: locationCoordinate, squareFt: squareFt, bedrooms: bedrooms, owner: owner)
             
@@ -66,10 +68,14 @@ class ListingsViewController: UIViewController {
             }
             group.notify(queue: .main, execute: {
                 self.listings.append(newListing)
+                sortGroup.leave()
                 let indexPath = IndexPath(row: self.listings.count - 1, section: 0)
                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
             })
         })
+        sortGroup.notify(queue: .main) { 
+            self.sortListings(self.listings)
+        }
     }
 }
 
