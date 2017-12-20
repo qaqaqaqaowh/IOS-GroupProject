@@ -36,6 +36,10 @@ class ListingsViewController: UIViewController {
     
     func observeListings() {
         let sortGroup = DispatchGroup()
+        sortGroup.enter()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5.0) {
+            sortGroup.leave()
+        }
         ref.child("listings").observe(DataEventType.childAdded, with: { (snapshot) in
             let group = DispatchGroup()
             guard let selectedListing = snapshot.value as? [String:Any],
@@ -73,7 +77,7 @@ class ListingsViewController: UIViewController {
                 self.tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.right)
             })
         })
-        sortGroup.notify(queue: .main) { 
+        sortGroup.notify(queue: .main) {
             self.sortListings(self.listings)
         }
     }
